@@ -1,9 +1,8 @@
 import * as React from 'react';
 import FortIcon from '@mui/icons-material/Fort';
 import BuildIcon from '@mui/icons-material/Build';
+import ScienceIcon from '@mui/icons-material/Science';
 import MiscellaneousServicesIcon from '@mui/icons-material/MiscellaneousServices';
-// import library from '@fortawesome/fontawesome-svg-core';
-// import { dragon } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDragon } from '@fortawesome/free-solid-svg-icons'
 
@@ -14,7 +13,7 @@ const container = {
     fontFamily:'Arial, sans-serif',
     color:'#2c844f',
     // border:'1px solid green',
-    height:'46%',
+    height:'40%',
 };
 const categoryHeaderContainer = {
     display:'flex',
@@ -51,11 +50,16 @@ const buttonInnerContainer = {
     // border:'1px solid green',
     height:'80%',
 };
+const categoryTitle = {
+    fontWeight:'600',
+    textAlign:'center',
+    fontSize:'13px',
+};
 const buttonStyle = {
     // width:'20%',
     border:'none',
     color:'white',
-    backgroundColor:'#858ca1',
+    backgroundColor:'#6c796c',
     fontSize:'12px',
     border:'1px solid silver',
     padding:'10px',
@@ -64,7 +68,7 @@ const buttonStyle = {
 };
 
 function Categories(props){
-    const dragonIcon = <FontAwesomeIcon icon={faDragon} color="#f90505" size="2x" />;
+    const dragonIcon = <FontAwesomeIcon icon={faDragon} color="#e18a03" size="2x" />;
     
     return (
         <div style={container}>
@@ -77,40 +81,42 @@ function Categories(props){
             <div style={buttonsContainer}>
                 <div style={buttonOuterContainer}>
                     <div style={buttonInnerContainer}>
-                        {/* <div>ICON</div> */}
-                        {/* <svg data-testid="DeleteIcon" ></svg> */}
-                        {/* <DeleteIcon /> */}
                         <div>{dragonIcon}</div>
-                        <p style={{textAlign:'center'}}>Options from Today's Best Sellers</p>
+                        <span style={categoryTitle}>Fictional Books</span>
+                        <span className='categoryDescription'>Romance novels, action adventure, etc</span>
                         <button style={buttonStyle}>Fiction</button>
                     </div>
                 </div>
                 <div style={buttonOuterContainer}>
                     <div style={buttonInnerContainer}>
-                        <div>ICON</div>
-                        <p style={{textAlign:'center'}}>Options from Today's Best Sellers</p>
-                        <button style={buttonStyle}>Non-Fiction</button>
+                        <ScienceIcon sx={{ fontSize:40, color:'#e18a03' }} />
+                        <span style={categoryTitle}>Scientific Books</span>
+                        <span className='categoryDescription'>Romance novels, action adventure, etc</span>
+                        <button style={buttonStyle}>Science</button>
                     </div>
                 </div>
                 <div style={buttonOuterContainer}>
                     <div style={buttonInnerContainer}>
                         {/* <div>ICON</div> */}
-                        <FortIcon sx={{ fontSize:40, color:'#f90505' }} />
-                        <p style={{textAlign:'center'}}>Options from Today's Best Sellers</p>
+                        <FortIcon sx={{ fontSize:40, color:'#e18a03' }} />
+                        <span style={categoryTitle}>History Books</span>
+                        <span className='categoryDescription'>Romance novels, action adventure, etc</span>
                         <button style={buttonStyle}>History</button>
                     </div>
                 </div>
                 <div style={buttonOuterContainer}>
                     <div style={buttonInnerContainer}>
-                        <MiscellaneousServicesIcon sx={{ fontSize:40, color:'#f90505' }} />
-                        <p style={{textAlign:'center'}}>Options from Today's Best Sellers</p>
+                        <MiscellaneousServicesIcon sx={{ fontSize:40, color:'#e18a03' }} />
+                        <span style={categoryTitle}>Engineering Books</span>
+                        <span className='categoryDescription'>Romance novels, action adventure, etc</span>
                         <button style={buttonStyle}>Engineer</button>
                     </div>
                 </div>
                 <div style={buttonOuterContainer}>
                     <div style={buttonInnerContainer}>
-                        <BuildIcon sx={{ fontSize:40, color:'#f90505' }} />
-                        <p style={{textAlign:'center'}}>Options from Today's Best Sellers</p>
+                        <BuildIcon sx={{ fontSize:40, color:'#e18a03' }} />
+                        <span style={categoryTitle}>DIY Books</span>
+                        <span className='categoryDescription'>Romance novels, action adventure, etc</span>
                         <button style={buttonStyle}>DIY</button>
                     </div>
                 </div>

@@ -69,7 +69,7 @@ function Navbar(props){
     
     return (
         <div style={container}>
-            <div style={logoContainer}>Lernas</div>
+            <div style={logoContainer}>Lonas</div>
             <div style={searchContainer}>
                 <input style={searchInputStyle} type="text"/>
                 <button style={searchButtonStyle}>Search</button>
@@ -81,92 +81,3 @@ function Navbar(props){
     );
 }
 export default Navbar;
-
-// import React from 'react';
-// import styled from 'styled-components';
-
-// const Container = styled.div`
-//   display: flex;
-//   width: 100%;
-//   border: 1px solid green;
-//   height: 7%;
-
-//   @media screen and (max-width: 600px) {
-//     flex-wrap: wrap;
-//     justify-content: center;
-//   }
-// `;
-
-// const LogoContainer = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   width: 15%;
-//   border: 1px solid;
-
-//   @media screen and (max-width: 600px) {
-//     width: 100%;
-//   }
-// `;
-
-// const SearchContainer = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   width: 55%;
-//   border: 1px solid;
-
-//   @media screen and (max-width: 600px) {
-//     width: 100%;
-//   }
-// `;
-
-// const HomeContainer = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   width: 10%;
-//   border: 1px solid;
-
-//   @media screen and (max-width: 600px) {
-//     width: 50%;
-//   }
-// `;
-
-// const LoginContainer = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   width: 10%;
-//   border: 1px solid;
-
-//   @media screen and (max-width: 600px) {
-//     width: 50%;
-//   }
-// `;
-
-// const AdminContainer = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   width: 10%;
-//   border: 1px solid;
-
-//   @media screen and (max-width: 600px) {
-//     width: 50%;
-//   }
-// `;
-
-// function Navbar(props) {
-//   return (
-//     <Container>
-//       <LogoContainer>LOGO</LogoContainer>
-//       <SearchContainer>SEARCH</SearchContainer>
-//       <HomeContainer>home</HomeContainer>
-//       <LoginContainer>login</LoginContainer>
-//       <AdminContainer>admin</AdminContainer>
-//     </Container>
-//   );
-// }
-
-// export default Navbar;

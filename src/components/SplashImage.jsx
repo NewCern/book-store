@@ -1,6 +1,9 @@
 import * as React from 'react';
-import './SplashImage.css';
-// import styled from 'styled-components';
+import '../css/SplashImage.css';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 
 const container = {
     display:'flex',
@@ -39,26 +42,36 @@ const arrowBackgroundStyle = {
     borderRadius:'50px',
     // border:'2px solid',
 }
+const splashTextTop = {
+    textDecoration:'underline',
+    fontWeight:'600',
+    fontSize:'20px'
+    // textDecoration:'underline'
+}
 
 function SplashImage(props){
     
     return (
-        <div style={container}>
-            <div style={text}>
-                <div style={{textDecoration:'underline'}}>
-                    Discover a world       
-                </div>
-                <div style={{textDecoration:'underline'}}>
-                    of literary wonders today    
-                </div>
-                <div style={{fontSize:'12px',paddingTop:'20px'}}>
-                    Great deals inside      
-                </div>
-                <div style={{fontSize:'12px',paddingBottom:'10px'}}>
-                    Science Fiction, History, and more    
-                </div>
-                <div style={arrowBackgroundStyle}>
-                    <div className='downward-arrow'></div>
+        <div className='container' style={container}>
+            <div className='transparencyLayer'>
+                <div style={text}>
+                    <div style={splashTextTop}>
+                        Discover a world       
+                    </div>
+                    <div style={splashTextTop}>
+                        of literary wonders today    
+                    </div>
+                    <div style={{padding:'20px'}}>
+                        <div className='splashTextBottom'>
+                            Great deals on    
+                        </div>
+                        <div className='splashTextBottom'>
+                            Science Fiction, History, and more    
+                        </div>
+                    </div>
+                    <div style={arrowBackgroundStyle}>
+                        <div className='downward-arrow'></div>
+                    </div>
                 </div>
             </div>
         </div>

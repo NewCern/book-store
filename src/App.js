@@ -12,7 +12,7 @@ const container = {
   top:'0px',
   left:'0px',
   height:'95vh',
-  minWidth:'650px'
+  minWidth:'700px'
 }
 
 function App() {
