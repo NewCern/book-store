@@ -4,10 +4,8 @@ import BuildIcon from '@mui/icons-material/Build';
 import MiscellaneousServicesIcon from '@mui/icons-material/MiscellaneousServices';
 // import library from '@fortawesome/fontawesome-svg-core';
 // import { dragon } from '@fortawesome/free-solid-svg-icons';
-import { icon } from '@fortawesome/fontawesome-svg-core/import.macro'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
-
+import { faDragon } from '@fortawesome/free-solid-svg-icons'
 
 const container = {
     display:'flex',
@@ -66,7 +64,7 @@ const buttonStyle = {
 };
 
 function Categories(props){
-    
+    const dragonIcon = <FontAwesomeIcon icon={faDragon} color="#f90505" size="2x" />;
     
     return (
         <div style={container}>
@@ -82,6 +80,7 @@ function Categories(props){
                         {/* <div>ICON</div> */}
                         {/* <svg data-testid="DeleteIcon" ></svg> */}
                         {/* <DeleteIcon /> */}
+                        <div>{dragonIcon}</div>
                         <p style={{textAlign:'center'}}>Options from Today's Best Sellers</p>
                         <button style={buttonStyle}>Fiction</button>
                     </div>
