@@ -4,7 +4,7 @@ const container = {
     display:'flex',
     justifyContent:'center',
     width:'100%',
-    border:'1px solid green',
+    // border:'1px solid green',
     height:'6%',
 };
 const textContainer = {
@@ -12,7 +12,7 @@ const textContainer = {
     justifyContent:'center',
     alignItems:'center',
     width:'50%',
-    border:'1px solid green',
+    // border:'1px solid green',
     height:'100%',
 };
 

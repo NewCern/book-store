@@ -1,46 +1,32 @@
 import * as React from 'react';
-import './SplashImage.css';
-// import styled from 'styled-components';
+import { icon } from '@fortawesome/fontawesome-svg-core/import.macro'
 
 const container = {
     display:'flex',
     justifyContent:'center',
     alignItems:'center',
     width:'100%',
-    borderTop:'2px solid black',
+    // borderTop:'2px solid black',
     borderBottom:'2px solid black',
     height:'40%',
     fontFamily:'Arial, sans-serif',
     backgroundColor:'#728991'
 };
-const text = {
-    display:'flex',
-    flexDirection:'column',
-    justifyContent:'center',
-    alignItems:'center',
-    textAlign:'center',
-    width:'30%',
-    minWidth:'410px',
-    fontSize:'20px',
-    // border:'1px solid green',
-    fontWeight:'400',
-    lineHeight:'1.5',
-    color:'white',
-    height:'70%',
-    minHeight:'210px'
-};
-const arrowBackgroundStyle = {
-    display:'flex',
-    justifyContent:'center',
-    alignItems:'center',
-    backgroundColor:'#f90505',
-    width:'40px',
-    height:'40px',
-    borderRadius:'50px',
-    // border:'2px solid',
-}
 
-function SplashImage(props){
+function fontawesomeTest(props){
+
+// Specify all properties: name, family, style
+icon({name: 'user', family: 'classic', style: 'solid'})
+icon({name: 'user', family: 'classic', style: 'regular'})
+icon({name: 'twitter', family: 'classic', style: 'brands'})
+
+// 'classic' is the default family, you can leave that off
+icon({name: 'user', style: 'solid'})
+icon({name: 'user', style: 'regular'})
+icon({name: 'twitter', style: 'brands'})
+
+// 'solid' is the default style, you can leave that off
+icon({name: 'user'})
     
     return (
         <div style={container}>
@@ -64,4 +50,4 @@ function SplashImage(props){
         </div>
     );
 }
-export default SplashImage;
+export default fontawesomeTest;
