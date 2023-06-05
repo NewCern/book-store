@@ -3,6 +3,7 @@ import Navbar from './components/Navbar';
 import SplashImage from './components/SplashImage';
 import Categories from './components/Categories';
 import Footer from './components/Footer';
+import Product from './components/Product/Product';
 // import './App.css';
 
 const container = {
@@ -19,8 +20,9 @@ function App() {
   return (
     <div style={container}>
       <Navbar/>
-      <SplashImage/>
-      <Categories/>
+      <Product/>
+      {/* <SplashImage/>
+      <Categories/> */}
       <Footer/>
     </div>
   );

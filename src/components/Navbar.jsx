@@ -3,9 +3,10 @@ import * as React from 'react';
 const container = {
     display:'flex',
     width:'100%',
-    // border:'1px solid green',
+    border:'1px solid silver',
     height:'7%',
-    fontFamily:'Arial, sans-serif'
+    fontFamily:'Arial, sans-serif',
+    boxShadow:'2px 2px 2px rgba(200, 200, 200, .5)'
 };
 const logoContainer = {
     display:'flex',
