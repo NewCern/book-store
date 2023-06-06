@@ -4,6 +4,7 @@ import SplashImage from './components/SplashImage';
 import Categories from './components/Categories';
 import Footer from './components/Footer';
 import Product from './components/Product/Product';
+import CategoriesSearch from './components/CategoriesSearch';
 // import './App.css';
 
 const container = {
@@ -20,9 +21,17 @@ function App() {
   return (
     <div style={container}>
       <Navbar/>
-      <Product/>
+
+      {/* SEARCH RESULTS VIEW <---------------------------------*/}
+      <CategoriesSearch/>
+
+      {/* PRODUCT PAGE VIEW <-----------------------------------*/}
+      {/* <Product/> */}
+
+      {/* LANDING PAGE VIEW <-----------------------------------*/}
       {/* <SplashImage/>
       <Categories/> */}
+
       <Footer/>
     </div>
   );
