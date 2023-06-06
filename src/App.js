@@ -5,7 +5,8 @@ import Categories from './components/Categories';
 import Footer from './components/Footer';
 import Product from './components/Product/Product';
 import CategoriesSearch from './components/CategoriesSearch';
-// import './App.css';
+import Cart from './components/Cart';
+
 
 const container = {
   // border:'1px solid',
@@ -22,8 +23,11 @@ function App() {
     <div style={container}>
       <Navbar/>
 
+      {/* SHOPPING CART */}
+      <Cart/>
+
       {/* SEARCH RESULTS VIEW <---------------------------------*/}
-      <CategoriesSearch/>
+      {/* <CategoriesSearch/> */}
 
       {/* PRODUCT PAGE VIEW <-----------------------------------*/}
       {/* <Product/> */}

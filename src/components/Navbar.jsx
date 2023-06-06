@@ -1,10 +1,12 @@
 import * as React from 'react';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+
 
 const container = {
     display:'flex',
     width:'100%',
     border:'1px solid silver',
-    height:'7%',
+    height:'55px',
     fontFamily:'Arial, sans-serif',
     boxShadow:'2px 2px 2px rgba(200, 200, 200, .5)'
 };
@@ -65,6 +67,29 @@ const adminContainer = {
     fontWeight:'600',
     // border:'1px solid'
 };
+const cartContainer = {
+    display:'flex',
+    position:'relative',
+    justifyContent:'center',
+    alignItems:'center',
+    width:'10%',
+    color:'#2c844f',
+    fontWeight:'600',
+    // border:'1px solid'
+};
+const cartCountLayer = {
+    display:'flex',
+    position:'absolute',
+    top:'26%',
+    left:'48%',
+    justifyContent:'center',
+    alignItems:'start',
+    // width:'10%',
+    color:'white',
+    fontSize:'13px',
+    // fontWeight:'600',
+    // border:'1px solid'
+};
 
 function Navbar(props){
     
@@ -77,7 +102,11 @@ function Navbar(props){
             </div>
             <div style={homeContainer}>home</div>
             <div style={loginContainer}>login</div>
-            <div style={adminContainer}>admin</div>
+            {/* <div style={adminContainer}>admin</div> */}
+            <div style={cartContainer}>
+                    <ShoppingCartIcon sx={{ fontSize:40, color:'#2c844f' }} />
+                    <div style={cartCountLayer}>0</div>
+            </div>
         </div>
     );
 }

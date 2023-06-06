@@ -8,6 +8,7 @@ const container = {
     borderTopLeftRadius:'20px',
     borderBottomLeftRadius:'20px',
     fontFamily:'Arial, sans-serif',
+    paddingBottom:'50px'
     // boxShadow:'3px 3px rgba(200, 200, 200, .5)',
 
 };
