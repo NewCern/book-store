@@ -2,13 +2,16 @@ import * as React from 'react';
 import SideBarCategories from './SideBarCategories';
 import '../../css/Product.css';
 
+const stockImage = process.env.REACT_APP_STOCK;
+
 const container = {
     display:'flex',
     justifyContent:'center',
     width:'100%',
     // border:'1px solid green',
     fontFamily:'Arial, sans-serif',
-    marginTop:'40px'
+    marginTop:'30px',
+    marginBottom:'30px',
 };
 const innerContainer = {
     display:'flex',
@@ -16,15 +19,15 @@ const innerContainer = {
     width:'80%',
     // border:'1px solid green',
     maxWidth:'1500px',
-    // fontFamily:'Arial, sans-serif'
 };
 const productContainer = {
     display:'flex',
     flexDirection:'column',
     justifyContent:'center',
     width:'80%',
-    // border:'1px solid green',
-    // fontFamily:'Arial, sans-serif'
+    // border:'1px solid silver',
+    borderTop:'1px solid silver',
+    marginLeft:'15px',
 };
 const categoryName = {
     display:'flex',
@@ -32,8 +35,10 @@ const categoryName = {
     // border:'1px solid green',
     borderBottom:'1px solid silver',
     fontSize:'20px',
+    // color:'#a01010',
     fontWeight:'600',
-    margin:'0px 0px 15px 15px'
+    paddingBottom:'15px',
+    margin:'15px 0px 15px 15px'
 };
 const productInfoContainer = {
     display:'flex',
@@ -74,8 +79,9 @@ const productDetailsContainer = {
 const bookTitle = {
     display:'flex',
     // border:'1px solid',
-    width:'100%',
-    fontWeight:'900',
+    width:'90%',
+    fontWeight:'600',
+    // color:'#bf9000',
     padding:'15px 0px 15px 0px'
 };
 const publicationContainer = {
@@ -93,17 +99,18 @@ const key = {
     display:'flex',
     // border:'1px solid',
     width:'30%',
-    fontWeight:'600',
+    fontWeight:'500',
 };
 const value = {
     display:'flex',
     // border:'1px solid',
     width:'70%',
+    color:'#807878'
 };
 const productDetails = {
     display:'flex',
     // border:'1px solid',
-    width:'100%',
+    width:'90%',
     padding: '15px 0px 30px 0px'
 };
 const price = {
@@ -134,16 +141,17 @@ const cartButton = {
 function Product(props){
     
     return (
+        <div>
+        {/* <div style={backgroundColor}></div> */}
         <div style={container}>
             <div style={innerContainer}>
-                {/* <SideBarCategories/> */}
+                <SideBarCategories/>
                 <div style={productContainer}>
                     <div style={categoryName}>Category Name</div>
                     <div style={productInfoContainer}>
                         <div style={imageContainer}>
                             <div style={imageWrapper}>
-                                <img style={imageFile} src="https://book-store-lnz.s3.us-east-1.amazonaws.com/book1.png?response-content-disposition=inline&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEOv%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMiJHMEUCIQCLs2PrLnCXE12d8g8spP1lHv39wNoCzaeGc48w92o%2B%2BwIgVo2GKqeuSINzL4AtRljzWF9CTb8Lgr4L5QZQlEJTYmgq5AIINBABGgwyMzM3ODQzNTA5MDUiDHmFLbo72am62uUePirBAoSrCtqwRo7JHTdAsQyAZT1WDjmBAcVYqpZOtb5XhAvLOe80ZzsZ%2BgZIdW4e59HL8mCYVNFvMq7XZiTXePnHTNhPjL1Uw4NROjmqc4EGyRhL%2BszVDnWDRum1BiePVO1kysXpp0YNAKodvIwhlHtyLwW7lfqtRkM7kCveQZNXZVIQz6yXkN3ob5WJ5yOMdvjVQohWNODlI41fVppJOr1mq2%2FEVyhL3%2BfC%2Bzu0XBJS3kOYtH10OmIqLP%2B9JyA5Y0zLmUWRV%2F1msnBrBpG%2F%2BtE%2FrnnHdP%2FmHiXvnH2UOxJ0y3h2Y7pPwtNtH9cCWZA9t3ivDPNHgHAE%2BHnyzmN8SNq%2FWiLFcYoUUE5l3qyDSt8kPTSNvdiObIc2IlGQQjIruS1G%2FcowgTudzWqZCvay4aAcgwXGnElYd5FOu7NRKiXxNNH7wDDI5vijBjqzAhHbM6cH%2BgfceF4EUr%2FMY%2B2ZzGuWgSR2NYxJwuR%2BIQHO6xZLutfSshryKTq3%2FvUPEIbk7Cj98hI44xdFyPgT6FmT2E9VGAy6GCS71SUKlnf83E%2F4DtqJHSjVELkDNeo6y38ITgm8tBJ6V7pYK4C91pWsYLVQaB%2BoUfsKHQt2W6Qp%2F6WIWC3hfdZ32he4%2BGlL7fG%2FT%2FZ5DWR%2BJMpNo%2FDjvv5C3juM59J%2B0%2BdpI5Wg5IOv0bll85W7Wh6taZIqSYkrZ2dpWFPuRB%2F45pePL5tKosq5PvwMwgVTyU6E7KtybesSfpIu%2F3LB%2Fgh41mrT%2Bg4BBu%2Fc3oATGPQAtAwLzXOGddvI9ZOOdwb6Kh6yF154XfrtMY01dkD%2BBeYIUvK8svc7kF8weYtdT%2FcZ2yOg9o%2BA0Ty%2BAME%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20230605T191848Z&X-Amz-SignedHeaders=host&X-Amz-Expires=300&X-Amz-Credential=ASIATM3VCDC4WGZ4VU5Z%2F20230605%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=c52b552f4ae9dcb552da940934a636af85dd7a0a3b9e9110a1e7327ec72af422" />
-                            </div>
+                                <img style={imageFile} src={stockImage}/>                      </div>
                         </div>
                         <div style={productDetailsContainer}>
                             <div style={bookTitle}>ARTISTRY OF FLOWERS: FLORAL DESIGN BY LA MUSA DE LAS FLORES (SIGNED)</div>
@@ -187,6 +195,7 @@ function Product(props){
 
                 </div>
             </div>
+        </div>
         </div>
     );
 }
