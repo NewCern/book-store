@@ -1,11 +1,11 @@
 import * as React from 'react';
-import Navbar from './components/Navbar';
-import SplashImage from './components/SplashImage';
-import Categories from './components/Categories';
-import Footer from './components/Footer';
-import Product from './components/Product/Product';
-import CategoriesSearch from './components/CategoriesSearch';
-import Cart from './components/Cart';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import LandingPage from './components/appComponents/LandingPage';
+import Navbar from './components/appComponents/components/Navbar';
+import CartPage from './components/appComponents/CartPage';
+import SearchPage from './components/appComponents/SearchPage';
+import ProductPage from './components/appComponents/ProductPage';
+import AdminPage from './components/adminComponents/AdminPage';
 
 
 const container = {
@@ -20,24 +20,17 @@ const container = {
 
 function App() {
   return (
+    <BrowserRouter>
     <div style={container}>
-      <Navbar/>
-
-      {/* SHOPPING CART */}
-      <Cart/>
-
-      {/* SEARCH RESULTS VIEW <---------------------------------*/}
-      {/* <CategoriesSearch/> */}
-
-      {/* PRODUCT PAGE VIEW <-----------------------------------*/}
-      {/* <Product/> */}
-
-      {/* LANDING PAGE VIEW <-----------------------------------*/}
-      {/* <SplashImage/>
-      <Categories/> */}
-
-      <Footer/>
+      <Routes>
+        <Route path='/' element={<LandingPage/>}/>
+        <Route path='/cart' element={<CartPage/>}/>
+        <Route path='/search' element={<SearchPage/>}/>
+        <Route path='/product' element={<ProductPage/>}/>
+        <Route path='/admin/upload' element={<AdminPage/>}/>
+      </Routes>
     </div>
+    </BrowserRouter>
   );
 }
 

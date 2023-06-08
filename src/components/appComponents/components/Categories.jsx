@@ -5,7 +5,13 @@ import ScienceIcon from '@mui/icons-material/Science';
 import MiscellaneousServicesIcon from '@mui/icons-material/MiscellaneousServices';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDragon } from '@fortawesome/free-solid-svg-icons'
+import axios from 'axios';
+import { setKeyword, setResults } from '../../../store/searchSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
+const QUERY_DATA = process.env.REACT_APP_QUERY_DATA_DIRECT;
+const dragonIcon = <FontAwesomeIcon icon={faDragon} color="#e18a03" size="2x" />;
 const container = {
     display:'flex',
     flexDirection:'column',
@@ -68,7 +74,29 @@ const buttonStyle = {
 };
 
 function Categories(props){
-    const dragonIcon = <FontAwesomeIcon icon={faDragon} color="#e18a03" size="2x" />;
+    const redux = useSelector(state => state.search);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const handleClick = async (event) => {
+        const buttonClicked = event.target;
+        const buttonValue = buttonClicked.innerText;
+        dispatch(setKeyword(buttonValue));
+        try {
+            const { data } = await axios.post(QUERY_DATA, { search: buttonValue });
+            const body = JSON.parse(data.body);
+            dispatch(setResults(body));
+            navigate('/search');
+        } catch(error) {
+            console.log(error)
+        }
+
+    }
+
+    React.useEffect(() => {
+        setKeyword(redux.keyword)
+        // console.log("Here is The keyword: ", redux);
+    }, [ handleClick, setKeyword ]);
     
     return (
         <div style={container}>
@@ -84,7 +112,7 @@ function Categories(props){
                         <div>{dragonIcon}</div>
                         <span style={categoryTitle}>Fictional Books</span>
                         <span className='categoryDescription'>Romance novels, action adventure, etc</span>
-                        <button style={buttonStyle}>Fiction</button>
+                        <button style={buttonStyle} onClick={handleClick}>Fiction</button>
                     </div>
                 </div>
                 <div style={buttonOuterContainer}>
@@ -92,7 +120,7 @@ function Categories(props){
                         <ScienceIcon sx={{ fontSize:40, color:'#e18a03' }} />
                         <span style={categoryTitle}>Scientific Books</span>
                         <span className='categoryDescription'>Romance novels, action adventure, etc</span>
-                        <button style={buttonStyle}>Science</button>
+                        <button style={buttonStyle} onClick={handleClick}>Science</button>
                     </div>
                 </div>
                 <div style={buttonOuterContainer}>
@@ -101,7 +129,7 @@ function Categories(props){
                         <FortIcon sx={{ fontSize:40, color:'#e18a03' }} />
                         <span style={categoryTitle}>History Books</span>
                         <span className='categoryDescription'>Romance novels, action adventure, etc</span>
-                        <button style={buttonStyle}>History</button>
+                        <button style={buttonStyle} onClick={handleClick}>History</button>
                     </div>
                 </div>
                 <div style={buttonOuterContainer}>
@@ -109,7 +137,7 @@ function Categories(props){
                         <MiscellaneousServicesIcon sx={{ fontSize:40, color:'#e18a03' }} />
                         <span style={categoryTitle}>Engineering Books</span>
                         <span className='categoryDescription'>Romance novels, action adventure, etc</span>
-                        <button style={buttonStyle}>Engineer</button>
+                        <button style={buttonStyle} onClick={handleClick}>Engineer</button>
                     </div>
                 </div>
                 <div style={buttonOuterContainer}>
@@ -117,7 +145,7 @@ function Categories(props){
                         <BuildIcon sx={{ fontSize:40, color:'#e18a03' }} />
                         <span style={categoryTitle}>DIY Books</span>
                         <span className='categoryDescription'>Romance novels, action adventure, etc</span>
-                        <button style={buttonStyle}>DIY</button>
+                        <button style={buttonStyle} onClick={handleClick}>DIY</button>
                     </div>
                 </div>
 

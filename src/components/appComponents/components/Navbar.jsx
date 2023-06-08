@@ -1,14 +1,17 @@
 import * as React from 'react';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { setKeyword, setResults } from '../../../store/searchSlice';
 
 const container = {
     display:'flex',
     width:'100%',
     border:'1px solid silver',
-    height:'55px',
+    backgroundColor:'#ebefe9',
+    height:'35px',
     fontFamily:'Arial, sans-serif',
-    boxShadow:'2px 2px 2px rgba(200, 200, 200, .5)'
 };
 const logoContainer = {
     display:'flex',
@@ -28,8 +31,8 @@ const searchContainer = {
     // border:'1px solid'
 };
 const searchInputStyle = {
-    marginRight:'15px',
-    width:'50%'
+    // marginRight:'15px',
+    width:'50%',
 };
 const searchButtonStyle = {
     width:'20%',
@@ -37,8 +40,7 @@ const searchButtonStyle = {
     color:'white',
     backgroundColor:'#2c844f',
     border:'2px solid green',
-    borderRadius:'20px',
-    wordSpacing:'3px'
+    // borderRadius:'20px',
 };
 const homeContainer = {
     display:'flex',
@@ -47,7 +49,9 @@ const homeContainer = {
     width:'10%',
     color:'#2c844f',
     fontWeight:'600',
-    // border:'1px solid'
+    // border:'1px solid',
+    borderRight:'1px solid silver',
+    borderLeft:'1px solid silver',
 };
 const loginContainer = {
     display:'flex',
@@ -57,6 +61,7 @@ const loginContainer = {
     color:'#2c844f',
     fontWeight:'600',
     // border:'1px solid'
+    borderRight:'1px solid silver',
 };
 const adminContainer = {
     display:'flex',
@@ -80,32 +85,68 @@ const cartContainer = {
 const cartCountLayer = {
     display:'flex',
     position:'absolute',
-    top:'26%',
-    left:'48%',
+    top:'6px',
+    left:'1x',
+    // border:'1px solid',
+    width:'35px',
+    height:'28px',
     justifyContent:'center',
     alignItems:'start',
-    // width:'10%',
     color:'white',
     fontSize:'13px',
-    // fontWeight:'600',
     // border:'1px solid'
 };
 
 function Navbar(props){
+    const reduxSearch = useSelector(state => state.search);
+    const reduxCart = useSelector(state => state.cart);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [input, setInput ] = React.useState({
+        search: "",
+    });
+    const QUERY_DATA = process.env.REACT_APP_QUERY_DATA_DIRECT;
+
+    const handleSearch = async () => {
+        if(input.search === "") return;
+        dispatch(setKeyword(input.search));
+        try {
+            const { data } = await axios.post(QUERY_DATA, input);
+            const body = JSON.parse(data.body);
+            dispatch(setResults(body));
+            navigate('/search');
+        } catch(error) {
+            console.log(error)
+        }
+    };
+
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setInput(prevState => {
+            return {
+                ...prevState,
+                [name]: value
+            }
+        })
+    };
+
+    const navigateToCart = () => {
+        navigate('/cart');
+    };
     
     return (
         <div style={container}>
             <div style={logoContainer}>Lonas</div>
             <div style={searchContainer}>
-                <input style={searchInputStyle} type="text"/>
-                <button style={searchButtonStyle}>Search</button>
+                <input name='search' value={input.search} onChange={handleChange} style={searchInputStyle} type="text"/>
+                <button onClick={handleSearch} style={searchButtonStyle}>Search</button>
             </div>
             <div style={homeContainer}>home</div>
             <div style={loginContainer}>login</div>
             {/* <div style={adminContainer}>admin</div> */}
             <div style={cartContainer}>
-                    <ShoppingCartIcon sx={{ fontSize:40, color:'#2c844f' }} />
-                    <div style={cartCountLayer}>0</div>
+                <ShoppingCartIcon sx={{ fontSize:35, color:'#2c844f' }} onClick={navigateToCart}/>
+                <div style={cartCountLayer} onClick={navigateToCart}>{reduxCart.items.length}</div>
             </div>
         </div>
     );

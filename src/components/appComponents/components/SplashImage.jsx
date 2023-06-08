@@ -1,5 +1,5 @@
 import * as React from 'react';
-import '../css/SplashImage.css';
+import '../../../css/SplashImage.css';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -10,8 +10,8 @@ const container = {
     justifyContent:'center',
     alignItems:'center',
     width:'100%',
-    borderTop:'2px solid black',
-    borderBottom:'2px solid black',
+    // borderTop:'2px solid black',
+    // borderBottom:'2px solid black',
     height:'40%',
     fontFamily:'Arial, sans-serif',
     backgroundColor:'#728991'

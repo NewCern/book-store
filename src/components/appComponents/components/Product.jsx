@@ -1,6 +1,6 @@
 import * as React from 'react';
+import '../../../css/Product.css';
 import SideBarCategories from './SideBarCategories';
-import '../../css/Product.css';
 
 const stockImage = process.env.REACT_APP_STOCK;
 
@@ -135,8 +135,6 @@ const cartButton = {
     color:'white',
     backgroundColor:'#2c844f',
     border:'2px solid green',
-    // borderRadius:'20px',
-    // wordSpacing:'3px'
 };
 function Product(props){
     
