@@ -96,6 +96,16 @@ const cartCountLayer = {
     fontSize:'13px',
     // border:'1px solid'
 };
+const cartTotalContainer = {
+    display:'flex',
+    justifyContent:'start',
+    alignItems:'center',
+    width:'5%',
+    color:'#2c844f',
+    fontWeight:'600',
+    // border:'1px solid',
+    borderRight:'1px solid silver',
+};
 
 function Navbar(props){
     const reduxSearch = useSelector(state => state.search);
@@ -130,13 +140,18 @@ function Navbar(props){
         })
     };
 
-    const navigateToCart = () => {
-        navigate('/cart');
+    const navigations = {
+        toHome: () => navigate('/'),
+        toCart: () => navigate('/cart'),
     };
+
+    React.useEffect(() => {
+
+    }, [reduxCart.items]);
     
     return (
         <div style={container}>
-            <div style={logoContainer}>Lonas</div>
+            <div style={logoContainer} onClick={navigations.toHome}>Lonas</div>
             <div style={searchContainer}>
                 <input name='search' value={input.search} onChange={handleChange} style={searchInputStyle} type="text"/>
                 <button onClick={handleSearch} style={searchButtonStyle}>Search</button>
@@ -145,9 +160,10 @@ function Navbar(props){
             <div style={loginContainer}>login</div>
             {/* <div style={adminContainer}>admin</div> */}
             <div style={cartContainer}>
-                <ShoppingCartIcon sx={{ fontSize:35, color:'#2c844f' }} onClick={navigateToCart}/>
-                <div style={cartCountLayer} onClick={navigateToCart}>{reduxCart.items.length}</div>
+                <ShoppingCartIcon sx={{ fontSize:35, color:'#2c844f' }} onClick={navigations.toCart}/>
+                <div style={cartCountLayer} onClick={navigations.toCart}>{reduxCart.items.length}</div>
             </div>
+            {/* <div style={cartTotalContainer}>${reduxCart.total}</div> */}
         </div>
     );
 }

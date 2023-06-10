@@ -2,7 +2,8 @@ import * as React from 'react';
 import SideBarCategories from './SideBarCategories';
 import { authors } from '../../../database/authors';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeFromCart, updateTotal } from '../../../store/cartSlice';
 
 const container = {
     display:'flex',
@@ -182,11 +183,20 @@ const checkoutButton = {
     backgroundColor:'#f4d608',
     borderRadius:'10px',
     fontWeight:'600',
-    // boxShadow:'2px 2px 2px 2px rgba(200, 200, 200, .3)'
 };
 
 function Cart(props){
     const reduxCart = useSelector(state => state.cart);
+    const dispatch = useDispatch();
+    const [ grandTotal, setGrandTotal ] = React.useState(0);
+
+    const handleRemoveFromCart = (event, item) => {
+        dispatch(removeFromCart(item));
+    };
+
+    React.useEffect(() => {
+        // console.log(reduxCart)
+    }, [reduxCart.items]);
     
     return (
         <div>
@@ -199,14 +209,14 @@ function Cart(props){
 
                     {/* INDIVIDUAL PRODUCT START*/}
                     {reduxCart.items.map((author, index) => (
-                    <div style={productInfoContainer}>
+                    <div key={index} style={productInfoContainer}>
                         <div style={checkBoxContainer}>
-                            <input type="checkbox" checked/>
+                            <input type="checkbox"  />
                         </div>
                         <div style={imageContainer}>
                             <div style={imageWrapper}>
                                 <div>IMAGE</div>
-                                <img src="C:/Users/lwiltshire/Desktop/AWS/book-store/src/image/book1.png" />
+                                <img src="" />
                             </div>
                         </div>
                         <div style={descriptionContainer}>
@@ -230,8 +240,9 @@ function Cart(props){
                                 </div>
                                 <div style={quantityContainer}>
                                     <div style={quantity}>Qty: </div>
-                                    <input style={quantityInput} type='text'/>
-                                    <DeleteIcon sx={{ fontSize:20, color:'#e63b3b' }} />
+                                    <input name="cart-quantity" style={{width:'50px',marginRight:'5px', textAlign:'center'}} placeholder='1' id={`cart-page-quantity-${author.bookId}`} type="number" min="1" max="100" value={author.quantity}/>
+                                    {/* <input style={quantityInput} type='text' /> */}
+                                    <DeleteIcon onClick={(event) => handleRemoveFromCart(event, author)} sx={{ fontSize:20, color:'#e63b3b' }} />
                                 </div>
                             </div>
                         </div>
@@ -244,7 +255,7 @@ function Cart(props){
                         <div style={proceedToCheckoutContainer}>
                             <button style={checkoutButton}>Proceed to checkout</button>
                         </div>
-                        <div style={totalText}>Total:</div>
+                        <div style={totalText}>Total: &nbsp; <b>${reduxCart.total}</b></div>
                         <div style={totalPrice}></div>
                     </div>
                 </div>

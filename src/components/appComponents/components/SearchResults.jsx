@@ -5,7 +5,9 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCartOutlined';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToCart } from '../../../store/cartSlice';
+import { addToCart, removeFromCart } from '../../../store/cartSlice';
+import { useNavigate } from 'react-router-dom';
+import { setProduct } from '../../../store/productSlice';
 
 const container = {
     display:'flex',
@@ -38,7 +40,7 @@ const cartTitle = {
     justifyContent:'start',
     // border:'1px solid green',
     borderBottom:'1px solid silver',
-    fontSize:'20px',
+    fontSize:'15px',
     // color:'#a01010',
     fontWeight:'600',
     padding:'15px 0px 15px 15px'
@@ -144,18 +146,100 @@ const addToCartContainer = {
     marginTop:'15px',
     marginRight:'15px'
 };
+const cartWrapper = {
+    display:'flex',
+    justifyContent:'center',
+    alignItems:'center',
+};
+const goToCartContainer = {
+    display:'flex',
+    justifyContent:'end',
+    width:'100%',
+    // border:'1px solid',
+    marginTop:'15px',
+    // alignItems:'center',
+};
+const toCartButton = {
+    padding:'5px 50px 5px 50px',
+    border:'1px solid',
+    borderColor:'#a18f14',
+    backgroundColor:'#f4d608',
+    borderRadius:'5px',
+    fontWeight:'600',
+    display:'none',
+};
+const checkoutButton = {
+    padding:'5px 50px 5px 50px',
+    border:'1px solid',
+    borderColor:'#a18f14',
+    backgroundColor:'#f4d608',
+    borderRadius:'10px',
+    fontWeight:'600',
+};
 
 
 function SearchResults(props){
     const reduxSearch = useSelector(state => state.search);
+    const reduxProduct = useSelector(state => state.product);
     const reduxCart = useSelector(state => state.cart);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const handleAddToCart = (item) => {
-        dispatch(addToCart(item));
-        console.log(reduxCart)
+    const handleCart = (event, item, index) => {
+        const deleteIcon = document.getElementById(`result-remove-cart-${index}`);
+        const addIcon = document.getElementById(`result-add-cart-${index}`);
+        const toCartButton = document.getElementById(`to-cart-button-${index}`);
+        const button = event.target;
+        if(button.getAttribute('id') === `result-add-cart-${index}`){
+            dispatch(addToCart({ ...item, quantity: 1 }));
+            addIcon.style.display = 'none';
+            deleteIcon.style.display = 'flex';
+            deleteIcon.style.color = 'red';
+            deleteIcon.style.fontSize = '35px';
+            toCartButton.style.display = 'block';
+        } 
+        if(button.getAttribute('id') === `result-remove-cart-${index}`){
+            dispatch(removeFromCart(item));
+            deleteIcon.style.display = 'none';
+            addIcon.style.display = 'flex';
+            addIcon.style.color = 'green';
+            addIcon.style.fontSize = '35px';
+            toCartButton.style.display = 'none';
+        }         
     };
 
+    const retainCartStatusInSearch = () => {
+        reduxSearch.results.forEach((resultItem, index) => {
+            reduxCart.items.forEach(cartItem => {
+                if(cartItem.bookId === resultItem.bookId){
+                    const deleteIcon = document.getElementById(`result-remove-cart-${index}`);
+                    const addIcon = document.getElementById(`result-add-cart-${index}`);
+                    const toCartButton = document.getElementById(`to-cart-button-${index}`);
+                    addIcon.style.display = 'none';
+                    deleteIcon.style.display = 'flex';
+                    deleteIcon.style.color = 'red';
+                    deleteIcon.style.fontSize = '35px';
+                    toCartButton.style.display = 'block';
+                }
+            })
+        });
+    };
+    const navigateToCart = () => {
+        navigate('/cart');
+    };
+
+    const navigateToProduct = (event, product) => {
+        // const productItem = reduxSearch.results.filter(item => item.bookId === product.bookId)
+        dispatch(setProduct(product));
+        navigate('/product');
+    };
+    
+    React.useEffect(() => {
+        retainCartStatusInSearch();
+        console.log("From search component: Items in Cart ---> ", reduxCart.items)
+        console.log("From search component: Items in Search Results ---> ", reduxSearch.results)
+    }, [reduxCart.items, reduxSearch.results]);
+    
     return (
         <div>
         {/* <div style={backgroundColor}></div> */}
@@ -163,15 +247,15 @@ function SearchResults(props){
             <div style={innerContainer}>
                 <SideBarCategories/>
                 <div style={productContainer}>
-                    <div style={cartTitle}>{reduxSearch.keyword}</div>
+                    <div style={cartTitle}>{reduxSearch.results.length} products: {reduxSearch.keyword}</div>
 
                     {/* INDIVIDUAL PRODUCT START*/}
                     {reduxSearch.results.map((book, index) => (
                     <div key={index} style={productInfoContainer}>
                         <div style={imageContainer}>
-                            <div style={imageWrapper}>
+                            <div style={imageWrapper} onClick={(event) => navigateToProduct(event, book)}>
                                 <div>IMAGE</div>
-                                <img src="C:/Users/lwiltshire/Desktop/AWS/book-store/src/image/book1.png" />
+                                <img src="" />
                             </div>
                         </div>
                         <div style={descriptionContainer}>
@@ -198,12 +282,16 @@ function SearchResults(props){
                         <div style={priceContainer}>
                             <div style={price}>${book.price}</div>
                             <div style={addToCartContainer}>
-                                <AddShoppingCartIcon 
-                                    sx={{ fontSize:25, color:'#718966', marginRight:'15px' }}
-                                    onClick={(e) => handleAddToCart(book)}
-                                    />
-                                <RemoveShoppingCartIcon sx={{ fontSize:25, color:'#e63b3b' }} />
+                                <div style={cartWrapper}  onClick={(event) => handleCart(event, book, index)} >
+                                    <AddShoppingCartIcon id={`result-add-cart-${index}`} sx={{ fontSize:35, color:'#718966' }} />
+                                </div>
+                                <div style={cartWrapper} onClick={(event) => handleCart(event, book, index)}>
+                                    <RemoveShoppingCartIcon id={`result-remove-cart-${index}`}  sx={{ fontSize:35, color:'#e63b3b', display:'none' }} />
+                                </div>
                                 {/* <DeleteIcon sx={{ fontSize:30, color:'#e63b3b' }} /> */}
+                            </div>
+                            <div style={goToCartContainer}>
+                                <button id={`to-cart-button-${index}`} onClick={navigateToCart} style={toCartButton}>IN CART</button>
                             </div>
                         </div>
                     </div>
