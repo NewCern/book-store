@@ -1,9 +1,11 @@
 import * as React from 'react';
 import SideBarCategories from './SideBarCategories';
-import { authors } from '../../../database/authors';
+// import { authors } from '../../../database/books';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch, useSelector } from 'react-redux';
-import { removeFromCart, updateTotal } from '../../../store/cartSlice';
+import { removeFromCart, updateQuantity, updateTotal } from '../../../store/cartSlice';
+import { persistReducer, persistStore } from 'redux-persist';
+import { store } from '../../../store/store';
 
 const container = {
     display:'flex',
@@ -79,7 +81,7 @@ const descriptionContainer = {
     flexDirection:'column',
     justifyContent:'start',
     // border:'1px solid green',
-    width:'50%',
+    width:'45%',
 };
 const productTitle = {
     display:'flex',
@@ -96,7 +98,8 @@ const publicationContainer = {
     flexDirection:'column',
     // border:'1px solid',
     width:'100%',
-    paddingLeft:'15px'
+    paddingLeft:'15px',
+    // paddingRight:'20px'
 };
 const keyValuePairContainer = {
     display:'flex',
@@ -107,14 +110,14 @@ const key = {
     display:'flex',
     // border:'1px solid',
     fontSize:'13px',
-    width:'30%',
+    width:'40%',
     fontWeight:'500',
 };
 const value = {
     display:'flex',
     // border:'1px solid',
     fontSize:'13px',
-    width:'70%',
+    width:'60%',
     color:'#807878'
 };
 const priceContainer = {
@@ -122,14 +125,33 @@ const priceContainer = {
     flexDirection:'column',
     justifyContent:'start',
     // border:'1px solid green',
-    width:'15%',
+    width:'20%',
+};
+const priceQuantityContainer = {
+    display:'flex',
+    // flexDirection:'column',
+    justifyContent:'end',
+    alignItems:'center',
+    // border:'1px solid green',
+    // width:'25%',
 };
 const price = {
     display:'flex',
     justifyContent:'end',
+    alignItems:'center',
     // border:'1px solid green',
     fontSize:'20px',
     fontWeight:'600',
+    paddingRight:'15px'
+    // width:'15%',
+};
+const quantity = {
+    display:'flex',
+    justifyContent:'end',
+    alignItems:'center',
+    // border:'1px solid green',
+    fontSize:'20px',
+    fontWeight:'400',
     paddingRight:'15px'
     // width:'15%',
 };
@@ -159,10 +181,10 @@ const quantityContainer = {
     // border:'1px solid',
     width:'100%',
 };
-const quantity = {
+const quantityInput = {
     marginRight:'5px',
 };
-const quantityInput = {
+const individualItemQuantity = {
     width:'20px',
     border:'1px solid',
     textAlign:'center',
@@ -186,21 +208,57 @@ const checkoutButton = {
 };
 
 function Cart(props){
+    const persistor = persistStore(store);
     const reduxCart = useSelector(state => state.cart);
     const dispatch = useDispatch();
-    const [ grandTotal, setGrandTotal ] = React.useState(0);
-
+    const [individualItemQuantity, setindividualItemQuantity] = React.useState({});
     const handleRemoveFromCart = (event, item) => {
         dispatch(removeFromCart(item));
     };
 
+    const handleQuantityChange = (event, bookId, book) => {
+        const quantity = document.getElementById(`cart-page-quantity-${bookId}`);
+        const quantityId = quantity.getAttribute('id');
+        const { value } = event.target;
+        const currentQuantity = event.target;
+        const currentQuantityId = currentQuantity.getAttribute(`id`);
+        if(quantityId === currentQuantityId){
+            individualItemQuantity[bookId] = parseInt(value);
+            setindividualItemQuantity(prevState => {
+                return {
+                    ...prevState,
+                    ...individualItemQuantity[bookId]
+                }
+            });
+            dispatch(updateQuantity({
+                ...book,
+                quantity: individualItemQuantity[bookId],
+            }))
+            console.log(typeof book.price, typeof book.quantity);
+        }
+    };
+
+    const calculateTotalBasedOnQuantity = () => {
+        const totalForEachProduct = []; 
+        reduxCart.items.forEach(bookInCart => {
+            const individualBookTotal = parseFloat(bookInCart.price).toFixed(2) * bookInCart.quantity;
+            totalForEachProduct.push(individualBookTotal);
+        });
+        const newCartTotal = totalForEachProduct.reduce((a, b) => a + b, 0);
+        dispatch(updateTotal(newCartTotal));
+        return totalForEachProduct;
+    };
+
+    const purgeState = () => {
+        persistor.purge();
+    };
+
     React.useEffect(() => {
-        // console.log(reduxCart)
-    }, [reduxCart.items]);
+        calculateTotalBasedOnQuantity()
+    }, [reduxCart.items, individualItemQuantity]);
     
     return (
         <div>
-        {/* <div style={backgroundColor}></div> */}
         <div style={container}>
             <div style={innerContainer}>
                 <SideBarCategories/>
@@ -208,7 +266,7 @@ function Cart(props){
                     <div style={cartTitle}>Shopping Cart</div>
 
                     {/* INDIVIDUAL PRODUCT START*/}
-                    {reduxCart.items.map((author, index) => (
+                    {reduxCart.items.map((book, index) => (
                     <div key={index} style={productInfoContainer}>
                         <div style={checkBoxContainer}>
                             <input type="checkbox"  />
@@ -220,40 +278,53 @@ function Cart(props){
                             </div>
                         </div>
                         <div style={descriptionContainer}>
-                            <div style={productTitle}>{author.title.toUpperCase()}</div>
+                            <div style={productTitle}>{book.title.toUpperCase()}</div>
                             <div style={publicationContainer}>
                                 <div style={keyValuePairContainer}>
                                     <div style={key}>By: </div>
-                                    <div style={value}>  {author.by.toUpperCase()}</div>
+                                    <div style={value}>  {book.by.toUpperCase()}</div>
                                 </div>
                                 <div style={keyValuePairContainer}>
                                     <div style={key}>Publication Date: </div>
-                                    <div style={value}>{author.publicationDate}</div>
+                                    <div style={value}>{book.publicationDate}</div>
                                 </div>
                                 <div style={keyValuePairContainer}>
                                     <div style={key}>Format: </div>
-                                    <div style={value}>{author.format}</div>
+                                    <div style={value}>{book.format}</div>
                                 </div>
                                 <div style={keyValuePairContainer}>
                                     <div style={key}>Category: </div>
-                                    <div style={value}>{author.category}</div>
+                                    <div style={value}>{book.category}</div>
                                 </div>
                                 <div style={quantityContainer}>
-                                    <div style={quantity}>Qty: </div>
-                                    <input name="cart-quantity" style={{width:'50px',marginRight:'5px', textAlign:'center'}} placeholder='1' id={`cart-page-quantity-${author.bookId}`} type="number" min="1" max="100" value={author.quantity}/>
-                                    {/* <input style={quantityInput} type='text' /> */}
-                                    <DeleteIcon onClick={(event) => handleRemoveFromCart(event, author)} sx={{ fontSize:20, color:'#e63b3b' }} />
+                                    <div style={quantityInput}>Qty: </div>
+                                    <input onChange={(event)=>handleQuantityChange(event, book.bookId, book)} 
+                                        name="cartQuantity" 
+                                        style={{width:'50px',marginRight:'5px', textAlign:'center'}} 
+                                        placeholder='1' 
+                                        id={`cart-page-quantity-${book.bookId}`} 
+                                        type="number" 
+                                        min="1" 
+                                        max="100" 
+                                        value={book.quantity}
+                                    />
+                                    <DeleteIcon onClick={(event) => handleRemoveFromCart(event, book)} sx={{ fontSize:20, color:'#e63b3b' }} />
                                 </div>
                             </div>
                         </div>
-                        <div style={priceContainer}><div style={price}>${author.price}</div></div>
+                        <div style={priceContainer}>
+                           <div style={priceQuantityContainer}>
+                                <div style={price}>${book.price}</div>
+                                <div style={quantity}>X {book.quantity}</div>
+                            </div>
+                        </div>
                     </div>
                     ))}
                     {/* INDIVIDUAL PRODUCT END */}
 
                     <div style={cartTotalContainer}>
                         <div style={proceedToCheckoutContainer}>
-                            <button style={checkoutButton}>Proceed to checkout</button>
+                            <button style={checkoutButton} onClick={purgeState}>Proceed to checkout</button>
                         </div>
                         <div style={totalText}>Total: &nbsp; <b>${reduxCart.total}</b></div>
                         <div style={totalPrice}></div>

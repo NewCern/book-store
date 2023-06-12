@@ -27,7 +27,7 @@ const searchContainer = {
     display:'flex',
     justifyContent:'center',
     alignItems:'center',
-    width:'55%',
+    width:'45%',
     // border:'1px solid'
 };
 const searchInputStyle = {
@@ -54,6 +54,16 @@ const homeContainer = {
     borderLeft:'1px solid silver',
 };
 const loginContainer = {
+    display:'flex',
+    justifyContent:'center',
+    alignItems:'center',
+    width:'10%',
+    color:'#2c844f',
+    fontWeight:'600',
+    // border:'1px solid'
+    borderRight:'1px solid silver',
+};
+const registerContainer = {
     display:'flex',
     justifyContent:'center',
     alignItems:'center',
@@ -143,6 +153,8 @@ function Navbar(props){
     const navigations = {
         toHome: () => navigate('/'),
         toCart: () => navigate('/cart'),
+        toRegister: () => navigate('/register'),
+        toLogin: () => navigate('/login'),
     };
 
     React.useEffect(() => {
@@ -156,8 +168,9 @@ function Navbar(props){
                 <input name='search' value={input.search} onChange={handleChange} style={searchInputStyle} type="text"/>
                 <button onClick={handleSearch} style={searchButtonStyle}>Search</button>
             </div>
-            <div style={homeContainer}>home</div>
-            <div style={loginContainer}>login</div>
+            <div style={homeContainer} onClick={navigations.toHome}>home</div>
+            <div style={loginContainer} onClick={navigations.toLogin}>login</div>
+            <div style={registerContainer} onClick={navigations.toRegister}>register</div>
             {/* <div style={adminContainer}>admin</div> */}
             <div style={cartContainer}>
                 <ShoppingCartIcon sx={{ fontSize:35, color:'#2c844f' }} onClick={navigations.toCart}/>

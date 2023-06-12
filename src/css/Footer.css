@@ -12,10 +12,13 @@
     height:100%;
 }
 .bottomRow {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 300;
-    font-size: 12px;
-  }
+  display:flex;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  font-size: 12px;
+}
 .categoryDescription {
     font-family: 'Roboto', sans-serif;
     font-weight: 300;

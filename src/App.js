@@ -6,6 +6,9 @@ import CartPage from './components/appComponents/CartPage';
 import SearchPage from './components/appComponents/SearchPage';
 import ProductPage from './components/appComponents/ProductPage';
 import AdminPage from './components/adminComponents/AdminPage';
+import RegisterPage from './components/appComponents/RegisterPage';
+import Login from './components/appComponents/components/Login';
+import LoginPage from './components/appComponents/LoginPage';
 
 
 const container = {
@@ -24,6 +27,8 @@ function App() {
     <div style={container}>
       <Routes>
         <Route path='/' element={<LandingPage/>}/>
+        <Route path='/register' element={<RegisterPage/>}/>
+        <Route path='/login' element={<LoginPage/>}/>
         <Route path='/cart' element={<CartPage/>}/>
         <Route path='/search' element={<SearchPage/>}/>
         <Route path='/product' element={<ProductPage/>}/>

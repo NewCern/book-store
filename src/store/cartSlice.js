@@ -13,7 +13,7 @@ export const cartSlice = createSlice({
         addToCart: (state, item) => {
             const cartTotal = state.items.reduce((acc, cartItem) => {
                 const price = parseFloat(cartItem.price);
-                const total = acc + price;
+                const total = (acc + price);
                 return total;
             }, 0);
             return {
@@ -22,9 +22,8 @@ export const cartSlice = createSlice({
                     ...state.items,
                     {
                     ...item.payload, 
-                    price: item.payload.quantity * item.payload.price,
                     }
-                ],
+                ].sort((a, b) => a.title.localeCompare(b.title)),
             }
         },
         removeFromCart: (state, deleteMe) => {
@@ -36,18 +35,30 @@ export const cartSlice = createSlice({
             }, 0);
             return {
                 ...state,
-                items: newList,
+                items: newList.sort((a, b) => a.title.localeCompare(b.title)),
                 total: newTotal.toFixed(2),
             }
         },
-        updateTotal: (state, total) => {
+        updateTotal: (state, updatedCarttotal) => {
             return {
                 ...state,
-                total: total.payload,
+                total: (parseFloat(updatedCarttotal.payload).toFixed(2)),
             }
+        },
+        updateQuantity: (state, book) => {
+            const newList = state.items.filter(item => item.bookId !== book.payload.bookId);
+            return {
+                ...state,
+                items: [
+                    ...newList,
+                    {
+                        ...book.payload,
+                    }
+                ].sort((a, b) => a.title.localeCompare(b.title))
+            };
         },
     },
 })
 
-export const { addToCart, removeFromCart, updateTotal } = cartSlice.actions;
+export const { addToCart, removeFromCart, updateTotal, updateQuantity } = cartSlice.actions;
 export default cartSlice.reducer;

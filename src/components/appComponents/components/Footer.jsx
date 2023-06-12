@@ -24,6 +24,8 @@ const textContainer = {
 };
 const topRow = {
     display:'flex',
+    justifyContent:'center',
+    textAlign:'center',
     color:'#2c844f',
     fontWeight:'600',
 };

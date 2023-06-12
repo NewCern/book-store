@@ -163,7 +163,10 @@ function Product(props){
     const handleAddToCart = () => {
         const qtyDOM = document.getElementById(`product-page-quantity-${reduxProduct.bookId}`).value;
         const quantity = qtyDOM !== "" ? qtyDOM : 1;
-        dispatch(addToCart({ ...reduxProduct, quantity: parseInt(quantity) }));
+        dispatch(addToCart({ 
+            ...reduxProduct, 
+            quantity: parseInt(quantity), 
+        }));
     };
 
     const cartStatusinProductPage = () => {

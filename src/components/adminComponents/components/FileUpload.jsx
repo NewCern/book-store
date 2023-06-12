@@ -24,6 +24,8 @@ const uploadContainer = {
     border:'1px solid silver',
     borderRadius:'10px',
     paddingBottom:'30px',
+    boxShadow:'3px 3px 3px rgba(200, 200, 200, .5)',
+
 };
 function FileUpload(props) {
     const URL = process.env.REACT_APP_URL;
