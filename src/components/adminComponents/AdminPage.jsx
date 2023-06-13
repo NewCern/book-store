@@ -21,7 +21,6 @@ const container = {
 function AdminPage() {
   return (
     <div style={container}>
-      {/* <Navbar/> */}
       <AdminNav/>
       <FileUpload/>
       <Footer/>
