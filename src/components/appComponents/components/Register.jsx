@@ -14,19 +14,6 @@ const Container = {
     // border:'1px solid',
 
 };
-const registerContainer = {
-    display:'flex', 
-    justifyContent:'space-between', 
-    flexDirection:'column', 
-    height:'300px',
-    width:'350px',
-    alignItems:'center',
-    border:'1px solid silver',
-    borderRadius:'10px',
-    paddingBottom:'30px',
-    boxShadow:'3px 3px 3px rgba(200, 200, 200, .5)',
-
-};
 
 const phoneContainer = {
     display:'flex',
@@ -59,11 +46,7 @@ const userNameContainer = {
     justifyContent:'space-between',
     width:'80%',
 };
-const passwordContainer = {
-    display:'flex',
-    justifyContent:'space-between',
-    width:'80%',
-};
+
 const cityStateZipContainer = {
     display:'flex',
     justifyContent:'space-between',
@@ -137,7 +120,12 @@ function Register(props) {
         width:'97%',
         border:'1px default black'
     })
-    const [validationPrompt, setValidationPrompt ] = useState({
+    const [validationPromptEmail, setValidationPromptEmail ] = useState({
+        color:'red',
+        display:'none',
+    })
+
+    const [validationPromptPassword, setValidationPromptPassword] = useState({
         color:'red',
         display:'none',
     })
@@ -145,6 +133,23 @@ function Register(props) {
         color:'green',
         display:'none',
     })
+    const [registerContainer, setRegisterContainer] = useState({
+        display:'flex', 
+        justifyContent:'space-between', 
+        flexDirection:'column', 
+        height:'300px',
+        width:'350px',
+        alignItems:'center',
+        border:'1px solid silver',
+        borderRadius:'10px',
+        paddingBottom:'30px',
+        boxShadow:'3px 3px 3px rgba(200, 200, 200, .5)',
+    })
+    const [passwordContainer, setPasswordContainer] = useState({
+        display:'flex',
+        justifyContent:'space-between',
+        width:'80%',
+    });
 
     const isLoading = useSelector(state => state.loading);
     const dispatch = useDispatch();
@@ -165,9 +170,13 @@ function Register(props) {
     })
 
     const handleChange = (e) => {
-        setValidationPrompt({
-            ...validationPrompt,
+        setValidationPromptEmail({
+            ...validationPromptEmail,
             display: 'none',
+        });
+        setValidationPromptPassword({
+            ...validationPromptPassword,
+            display:'none',
         });
         const{name, value} = e.target;
         setInput(prevState => {
@@ -181,6 +190,17 @@ function Register(props) {
     const registerUser = async (event) => {
         event.preventDefault();
         try{
+            if(input.password !== input.confirmPassword){
+                // setPasswordContainer({
+                //     ...passwordContainer,
+                //     border:'2px solid red',
+                // });
+                setValidationPromptPassword({
+                    ...validationPromptPassword,
+                    display:'block',
+                });
+                return;
+            }
             await axios.post(REGISTER_URL, input)
             .then((res) => {
                 console.log("Here is the response: ", res);
@@ -199,24 +219,28 @@ function Register(props) {
                         state:"",
                         zip:"",
                     });
-                    setUserNameStyle({
-                        ...userNameStyle,
-                        border:'1px default black',
-                    })
+                    // setUserNameStyle({
+                    //     ...userNameStyle,
+                    //     border:'1px solid black',
+                    // });
                     setregistrationComplete({
                         ...registrationComplete,
                         display:'block',
-                    })
+                    });
+                    setRegisterContainer({
+                        ...registerContainer,
+                        display:'none',
+                    });
                     return;
                 }
                 if(res.data.statusCode === 409){
-                    setUserNameStyle({
-                        ...userNameStyle,
-                        border: '2px solid red',
-                    });
+                    // setUserNameStyle({
+                    //     ...userNameStyle,
+                    //     border: '2px solid red',
+                    // });
                     // show Existing email prompt
-                    setValidationPrompt({
-                        ...validationPrompt,
+                    setValidationPromptEmail({
+                        ...validationPromptEmail,
                         display: 'block',
                     });
                     return;
@@ -239,8 +263,8 @@ function Register(props) {
                             <input required id={`registration-email-${input.emailAddress}`} style={userNameStyle} name='emailAddress' type='email' placeholder='email address' value={input.emailAddress} onChange={(event)=>handleChange(event)}/>
                         </div>
                         <div style={passwordContainer}>
-                            <input required style={passwordStyle} name='password' type='text' placeholder='password' value={input.password} onChange={handleChange}/>
-                            <input required style={passwordStyle} name='confirmPassword' type='text' placeholder='confirm password' value={input.confirmPassword} onChange={handleChange}/>                
+                            <input required style={passwordStyle} name='password' type='password' placeholder='password' value={input.password} onChange={handleChange}/>
+                            <input required style={passwordStyle} name='confirmPassword' type='password' placeholder='confirm password' value={input.confirmPassword} onChange={handleChange}/>                
                         </div>
                         <div style={nameContainer}>
                             <input required style={nameStyle} name='firstName' type='text' placeholder='first name' value={input.firstName} onChange={handleChange}/>
@@ -264,8 +288,11 @@ function Register(props) {
                         </div>
                 </div>
             </form>
-            <div style={validationPrompt}>
-                <h4>* Email Already Exists!</h4>
+            <div style={validationPromptEmail}>
+                <h4>* Email Already Exists for {input.emailAddress}!</h4>
+            </div>
+            <div style={validationPromptPassword}>
+                <h4>* Password Confirmation Did NOT match</h4>
             </div>
             <div style={registrationComplete}>
                 <h4><i>Registration Complete. THANK YOU.</i></h4>
