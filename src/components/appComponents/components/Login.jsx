@@ -1,3 +1,4 @@
+import * as React from 'react';
 import axios from 'axios';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -66,18 +67,17 @@ const submitStyle = {
 };
 
 function Login(props) {
-    const URL = process.env.REACT_APP_URL;
+    const USER_LOGIN = process.env.REACT_APP_LOGIN;
 
     const isLoading = useSelector(state => state.loading);
     const dispatch = useDispatch();
-    const [dataObject, setDataObject] = useState({});
     const [loading, setLoading] = useState(false);
     const[input, setInput] = useState({
-        path: "",
-    })
+        emailAddress: "",
+        password: "",
+    });
 
     const handleChange = (e) => {
-        console.log(isLoading)
         const{name, value} = e.target;
         setInput(prevState => {
             return {
@@ -87,39 +87,38 @@ function Login(props) {
         })
     ;}
 
-    const registerUser = async () => {
+    const loginUser = async (event) => {
+        event.preventDefault();
         try{
-            if(input.path !== ""){
-                setLoading(true);
-                // dispatch(loading());
-                await axios.post(URL, dataObject)
-                .then((res) => {
-                    setLoading(false);
-                    console.log("Here is the response: ", res);
-                    // dispatch(notLoading());
-                });
-                setInput({
-                    path: "",
-                })
-            }
+            await axios.post(USER_LOGIN, input)
+            .then((res) => {
+                setLoading(false);
+                console.log("Here is the response: ", res);
+            });
         } catch(error){
             console.log(error)
         }
     }
+
+    React.useEffect(() => {
+        console.log(input)
+    }, [input]);
   return (
         <div style={Container}>
+            <form action="POST" onSubmit={(event)=>loginUser(event)}>
             <div style={loginContainer}>
                 <h4 style={{color:'grey'}}>User LOGIN</h4>
-                <div style={userNameContainer}>
-                    <input style={userNameStyle} name='path' type='text' placeholder='user name' value={input.path} onChange={handleChange}/>
+                <div  style={userNameContainer}>
+                    <input required style={userNameStyle} name='emailAddress' type='email' placeholder='email address' value={input.emailAddress} onChange={handleChange}/>
                 </div>
                 <div style={passwordContainer}>
-                    <input style={passwordStyle} name='path' type='text' placeholder='password' value={input.path} onChange={handleChange}/>
+                    <input required style={passwordStyle} name='password' type='password' placeholder='password' value={input.password} onChange={handleChange}/>
                 </div>
                 <div style={submitContainer}>
-                        <button style={submitStyle}>SUBMIT</button>
+                        <input type="submit" value="SUBMIT" style={submitStyle}/>
                 </div>
         </div>
+        </form>
     </div>
   );
 }

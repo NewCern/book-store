@@ -191,10 +191,6 @@ function Register(props) {
         event.preventDefault();
         try{
             if(input.password !== input.confirmPassword){
-                // setPasswordContainer({
-                //     ...passwordContainer,
-                //     border:'2px solid red',
-                // });
                 setValidationPromptPassword({
                     ...validationPromptPassword,
                     display:'block',
