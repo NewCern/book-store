@@ -215,10 +215,7 @@ function Register(props) {
                         state:"",
                         zip:"",
                     });
-                    // setUserNameStyle({
-                    //     ...userNameStyle,
-                    //     border:'1px solid black',
-                    // });
+
                     setregistrationComplete({
                         ...registrationComplete,
                         display:'block',
@@ -230,11 +227,6 @@ function Register(props) {
                     return;
                 }
                 if(res.data.statusCode === 409){
-                    // setUserNameStyle({
-                    //     ...userNameStyle,
-                    //     border: '2px solid red',
-                    // });
-                    // show Existing email prompt
                     setValidationPromptEmail({
                         ...validationPromptEmail,
                         display: 'block',

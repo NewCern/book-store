@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { removeFromCart, updateQuantity, updateTotal } from '../../../store/cartSlice';
 import { persistReducer, persistStore } from 'redux-persist';
 import { store } from '../../../store/store';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const container = {
     display:'flex',
@@ -208,7 +209,8 @@ const checkoutButton = {
 };
 
 function Cart(props){
-    const persistor = persistStore(store);
+    // const persistor = persistStore(store);
+    const navigate = useNavigate();
     const reduxCart = useSelector(state => state.cart);
     const dispatch = useDispatch();
     const [individualItemQuantity, setindividualItemQuantity] = React.useState({});
@@ -249,8 +251,9 @@ function Cart(props){
         return totalForEachProduct;
     };
 
-    const purgeState = () => {
-        persistor.purge();
+    const handleCheckout = () => {
+        navigate('/checkout');
+        // persistor.purge();
     };
 
     React.useEffect(() => {
@@ -324,7 +327,7 @@ function Cart(props){
 
                     <div style={cartTotalContainer}>
                         <div style={proceedToCheckoutContainer}>
-                            <button style={checkoutButton} onClick={purgeState}>Proceed to checkout</button>
+                            <button style={checkoutButton} onClick={handleCheckout}>Proceed to checkout</button>
                         </div>
                         <div style={totalText}>Total: &nbsp; <b>${reduxCart.total}</b></div>
                         <div style={totalPrice}></div>

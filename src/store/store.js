@@ -5,6 +5,7 @@ import loadingSlice from "./loadingSlice";
 import searchSlice from "./searchSlice";
 import cartSlice from "./cartSlice";
 import productSlice from "./productSlice";
+import loginSlice from "./loginSlice";
 
 const persistConfig = {
     key: 'root',
@@ -17,6 +18,7 @@ const persistConfig = {
     search: searchSlice,
     cart: cartSlice,
     product: productSlice,
+    login: loginSlice,
   });
   
   const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { setKeyword, setResults } from '../../../store/searchSlice';
+import { setLoggout } from '../../../store/loginSlice';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const container = {
     display:'flex',
@@ -54,6 +56,16 @@ const homeContainer = {
     borderLeft:'1px solid silver',
 };
 const loginContainer = {
+    display:'flex',
+    justifyContent:'center',
+    alignItems:'center',
+    width:'10%',
+    color:'#2c844f',
+    fontWeight:'600',
+    // border:'1px solid'
+    borderRight:'1px solid silver',
+};
+const accountIconContainer = {
     display:'flex',
     justifyContent:'center',
     alignItems:'center',
@@ -119,6 +131,7 @@ const cartTotalContainer = {
 
 function Navbar(props){
     const reduxSearch = useSelector(state => state.search);
+    const reduxLogin = useSelector(state => state.login);
     const reduxCart = useSelector(state => state.cart);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -126,6 +139,13 @@ function Navbar(props){
         search: "",
     });
     const QUERY_DATA = process.env.REACT_APP_QUERY_DATA_DIRECT;
+
+    const navigations = {
+        toHome: () => navigate('/'),
+        toCart: () => navigate('/cart'),
+        toRegister: () => navigate('/register'),
+        toLogin: () => navigate('/login'),
+    };
 
     const handleSearch = async () => {
         if(input.search === "") return;
@@ -150,11 +170,10 @@ function Navbar(props){
         })
     };
 
-    const navigations = {
-        toHome: () => navigate('/'),
-        toCart: () => navigate('/cart'),
-        toRegister: () => navigate('/register'),
-        toLogin: () => navigate('/login'),
+    const logOut = () => {
+        navigate('/login');
+        dispatch(setLoggout());
+        console.log(reduxLogin);
     };
 
     React.useEffect(() => {
@@ -169,14 +188,27 @@ function Navbar(props){
                 <button onClick={handleSearch} style={searchButtonStyle}>Search</button>
             </div>
             <div style={homeContainer} onClick={navigations.toHome}>home</div>
-            <div style={loginContainer} onClick={navigations.toLogin}>login</div>
-            <div style={registerContainer} onClick={navigations.toRegister}>register</div>
+            {
+                reduxLogin.isLoggedIn ?
+                <>
+                    <div style={loginContainer} onClick={logOut}>logout</div>
+                    <div style={accountIconContainer}>
+                        <AccountCircleIcon sx={{ fontSize:25, color:'#2c844f' }} onClick={navigations.toCart}/>
+                        <span>{reduxLogin.firstName[0]}{reduxLogin.lastName[0]}</span>
+                    </div>
+                </>
+                :
+                <>
+                    <div style={loginContainer} onClick={navigations.toLogin}>login</div>
+                    <div style={registerContainer} onClick={navigations.toRegister}>register</div>
+                </>
+            }
             {/* <div style={adminContainer}>admin</div> */}
             <div style={cartContainer}>
-                <ShoppingCartIcon sx={{ fontSize:35, color:'#2c844f' }} onClick={navigations.toCart}/>
-                <div style={cartCountLayer} onClick={navigations.toCart}>{reduxCart.items.length}</div>
+                <ShoppingCartIcon sx={{ fontSize:25, color:'#2c844f' }} onClick={navigations.toCart}/>
+                {/* <div style={cartCountLayer} onClick={navigations.toCart}>{reduxCart.items.length}</div> */}
+                <div onClick={navigations.toCart}>{reduxCart.items.length}</div>
             </div>
-            {/* <div style={cartTotalContainer}>${reduxCart.total}</div> */}
         </div>
     );
 }

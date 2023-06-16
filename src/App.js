@@ -9,6 +9,7 @@ import AdminPage from './components/adminComponents/AdminPage';
 import RegisterPage from './components/appComponents/RegisterPage';
 import Login from './components/appComponents/components/Login';
 import LoginPage from './components/appComponents/LoginPage';
+import CheckoutPage from './components/appComponents/checkoutPage';
 
 
 const container = {
@@ -33,6 +34,7 @@ function App() {
         <Route path='/search' element={<SearchPage/>}/>
         <Route path='/product' element={<ProductPage/>}/>
         <Route path='/admin/upload' element={<AdminPage/>}/>
+        <Route path='/checkout' element={<CheckoutPage/>}/>
       </Routes>
     </div>
     </BrowserRouter>

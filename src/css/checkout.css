@@ -1,0 +1,73 @@
+.infoContainer{
+    display:flex;
+    flex-direction: column;
+    border:1px solid black;
+    width:50%;
+}
+.billing-shipping-info-header{
+    border:1px solid black;
+    border-right: 1px solid white;
+    color:white;
+    background-color: rgb(54, 48, 48);
+    font-size: 11px;
+    padding: 5px 0px 5px 5px;
+    font-weight: 200;
+}
+.conditions-of-use{
+    display:flex;
+    font-size: 11px;
+    /* width:90%; */
+    /* border:1px solid; */
+    padding: 7px 0px 7px 0px;
+    /* margin-left: 15px; */
+}
+.customer-address-container{
+    /* margin-left: 15px; */
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* border:1px solid; */
+    width: 100%;
+    background-color: rgb(231, 230, 230);
+}
+.inner-customer-address-container{
+    width:90%;
+    /* border:1px solid; */
+}
+.row-container{
+    display:flex;
+    /* justify-content: space-between; */
+    /* border:1px solid; */
+    width:100%;
+}
+.name-input{
+    width:50%;
+    font-size: 11px;
+    padding:7px;
+    /* border:1px solid black; */
+    margin-top: 5px;
+}
+.email-input{
+    width:96%;
+    margin-top: 5px;
+    /* border:white; */
+    padding:7px;
+}
+
+.paymentInfoContainer{
+    display:flex;
+    flex-direction: column;
+    border:1px solid black;
+    border-left: none;
+    width:50%;
+}
+.payment-info-header{
+    border:1px solid black;
+    border-left: none;
+    color:white;
+    background-color: rgb(54, 48, 48);
+    font-size: 11px;
+    padding: 5px 0px 5px 5px;
+    font-weight: 200;
+}

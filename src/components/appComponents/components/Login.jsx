@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 // import { loading, notLoading } from '../../../store/loadingSlice';
 import { FileUploadOutlined } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { setLoggedIn } from '../../../store/loginSlice';
 
 const Container = {
     display:'flex',
@@ -69,15 +71,23 @@ const submitStyle = {
 function Login(props) {
     const USER_LOGIN = process.env.REACT_APP_LOGIN;
 
-    const isLoading = useSelector(state => state.loading);
+    const navigate = useNavigate();
+    const reduxLogin = useSelector(state => state.login);
     const dispatch = useDispatch();
-    const [loading, setLoading] = useState(false);
     const[input, setInput] = useState({
         emailAddress: "",
         password: "",
     });
+    const [emailORpasswordValidation, setemailORpasswordValidation ] = useState({
+        color:'red',
+        display:'none',
+    })
 
     const handleChange = (e) => {
+        setemailORpasswordValidation({
+            ...emailORpasswordValidation,
+            display: 'none',
+        });
         const{name, value} = e.target;
         setInput(prevState => {
             return {
@@ -92,8 +102,15 @@ function Login(props) {
         try{
             await axios.post(USER_LOGIN, input)
             .then((res) => {
-                setLoading(false);
-                console.log("Here is the response: ", res);
+                const body = JSON.parse(res.data.body);
+                if(body.statusCode === 200){
+                    dispatch(setLoggedIn(body.user));
+                    return navigate('/');
+                }
+                setemailORpasswordValidation({
+                    ...emailORpasswordValidation,
+                    display: 'block',
+                });
             });
         } catch(error){
             console.log(error)
@@ -101,8 +118,9 @@ function Login(props) {
     }
 
     React.useEffect(() => {
-        console.log(input)
-    }, [input]);
+        // console.log(input)
+        console.log(reduxLogin)
+    }, [input, reduxLogin]);
   return (
         <div style={Container}>
             <form action="POST" onSubmit={(event)=>loginUser(event)}>
@@ -119,6 +137,9 @@ function Login(props) {
                 </div>
         </div>
         </form>
+        <div style={emailORpasswordValidation}>
+            <h4>* Invalid Email or Password!</h4>
+        </div>
     </div>
   );
 }
