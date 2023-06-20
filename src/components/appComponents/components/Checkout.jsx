@@ -13,6 +13,7 @@ import discoverCard from '../../../image/discoverCard.svg';
 import paypalWord from '../../../image/paypalWord.png';
 import paypalP from '../../../image/paypalP.png';
 import axios from 'axios';
+import { setLoggedIn } from '../../../store/loginSlice';
 
 
 function Checkout(props){
@@ -36,7 +37,7 @@ function Checkout(props){
         padding:'7px',
         marginTop:"5px",
         // border:'1px solid',
-        display:'none',
+        display: reduxCustomer.isLoggedIn ? 'none' : 'block',
     })
     const [ customerName, setCustomerName ] = React.useState({
         width:"50%",
@@ -47,13 +48,13 @@ function Checkout(props){
         // border:'1px solid',
     })
     const [ inputAreaCode, setInputAreaCode ] = React.useState({
-        width:"10%",
+        width:"20%",
         fontSize:"11px",
         padding:'7px',
         marginTop:"5px",
         // backgroundColor:'white',
         // border:'1px solid',
-        display:'none',
+        display: reduxCustomer.isLoggedIn ? 'none' : 'block',
         marginBottom:'15px',
     })
     const [ customerAreaCode, setCustomerAreaCode ] = React.useState({
@@ -66,13 +67,13 @@ function Checkout(props){
         // border:'1px solid',
     })
     const [ inputPhone, setInputPhone ] = React.useState({
-        width:"90%",
+        width:"80%",
         fontSize:"11px",
         padding:'7px',
         marginTop:"5px",
         // backgroundColor:'white',
         // border:'1px solid',
-        display:'none',
+        display: reduxCustomer.isLoggedIn ? 'none' : 'block',
         marginBottom:'15px',
     })
     const [ customerPhone, setCustomerPhone ] = React.useState({
@@ -90,7 +91,7 @@ function Checkout(props){
         padding:'7px',
         marginTop:"5px",
         /* border:1px solid; */
-        display:'none',
+        display: reduxCustomer.isLoggedIn ? 'none' : 'block',
     })
     const [ customerEmail, setCustomerEmail ] = React.useState({
         width:"100%",
@@ -191,11 +192,25 @@ function Checkout(props){
         color:'white',
         fontSize:"11px",
         backgroundColor:"rgba(68, 148, 68)",
-        borderRadius:"13px",
+        borderRadius:"8px",
         border:"none",
-        padding:"12px",
+        padding:"10px",
         // border:"1px solid black",
         display:"none",
+        marginBottom:'15px',
+    })
+    const [ updateShippingWhileLoggedOutButton, setUpdateShippingWhileLoggedOutButton ] = React.useState({
+        padding:"10px 25px 10px 25px",
+        marginRight:"10px",
+        color:'white',
+        fontSize:"11px",
+        backgroundColor:"rgba(68, 148, 68)",
+        borderRadius:"8px",
+        border:"none",
+        padding:"10px",
+        // border:"1px solid black",
+        // display:"none",
+        marginBottom:'15px',
     })
     const [ paymentInfoContainer, setPaymentInfoContainer ] = React.useState({
         position:"relative",
@@ -300,7 +315,10 @@ function Checkout(props){
         }
     }
 
-    const editShippingDetails = () => {
+    const editShippingDetails = (event) => {
+
+        event.preventDefault();
+
         setUpdateShippingButton({
             ...updateShippingButton,
             display:"block",
@@ -351,23 +369,26 @@ function Checkout(props){
         });
     };
 
-    const saveUpdatedShippingDetails = async() => {
+    const saveUpdatedShippingDetails = async (event) => { 
+
+        event.preventDefault();
+
         try{
-            await axios.post(UPDATE_CUSTOMER, {
+            const update = {
                 ...input,
-                emailAddressUpperCase: input.emailAddress.toUpperCase(),
+                // emailAddressUpperCase: input.emailAddress.toUpperCase(),
                 firstNameUpperCase: input.firstName.toUpperCase(),
                 lastNameUpperCase: input.lastName.toUpperCase(),
                 addressUpperCase: input.address.toUpperCase(),
                 aptUpperCase: input.apt.toUpperCase(),
                 cityUpperCase: input.city.toUpperCase(),
                 stateUpperCase: input.state.toUpperCase(),
-            })
+            };
+            await axios.post(UPDATE_CUSTOMER, update)
             .then(res => {
-                const customer = JSON.parse(res.data.rest.body);
-                console.log("Response from checkout: ", customer);
+                dispatch(setLoggedIn(input));
+                console.log("Response from checkout: ", res);
             });
-            
             setUpdateShippingButton({
                 ...updateShippingButton,
                 display:"none",
@@ -416,154 +437,235 @@ function Checkout(props){
                 ...updatePrompt,
                 display:"none",
             });
+
         } catch(error){
             console.log(error)
         }
     };
 
     React.useEffect(() => {
-        console.log("From use effect in Checkout component: ");
+        // console.log("From use effect in Checkout component: ");
         // console.log(reduxCustomer);
-        console.log(input);
-
-
+        // console.log(input);
     }, [input]);
     
     return (
-        <div>
+        <>
         <div className='container-checkout'>
             <div className='inner-container-checkout'>
+
+                {/* INFO and PAYMENT CONTAINER */}
                 <div className='customer-info-payment-container'>
-                <div className='infoContainer'>
-                    <div className='billing-shipping-info-header'>billing/shipping information</div>
-                    <div className='customer-address-container'>
-                        <div className='inner-customer-address-container'>
-                            <div className='conditions-of-use'>must be the same as your credit card address</div>
-                            <div className='address-row-container'>
-                                <span style={customerName}>{input.firstName}</span>
-                                <span style={customerName}>{input.lastName}</span>
-                                <input style={inputName} name="firstName" placeholder='first name' value={input.firstName} onChange={handleChange}/>
-                                <input style={inputName} name="lastName" placeholder='last name' value={input.lastName} onChange={handleChange}/>
+
+                    {/* BILLING ADDRESS CONTAINER */}
+                    {/* <div> */}
+                        <form action="POST" onSubmit={(event)=>saveUpdatedShippingDetails(event)} className='infoContainer' >
+                            <div className='billing-shipping-info-header'>billing/shipping information</div>
+                            <div className='customer-address-container'>
+                                <div className='inner-customer-address-container'>
+                                    <div className='conditions-of-use'>must be the same as your credit card address</div>
+                                    {
+                                        reduxCustomer.isLoggedIn ?
+                                        <>
+                                        <div className='address-row-container'>
+                                            <span style={customerName}>{input.firstName}</span>
+                                            <span style={customerName}>{input.lastName}</span>
+                                            <input required style={inputName} name="firstName" placeholder='first name' value={input.firstName} onChange={handleChange}/>
+                                            <input required style={inputName} name="lastName" placeholder='last name' value={input.lastName} onChange={handleChange}/>
+                                        </div>
+                                        <div className='address-row-container'>
+                                            <span style={customerEmail}>{input.emailAddress}</span>
+                                            <input required style={inputEmail} placeholder='email' name="emailAddress" value={input.emailAddress} onChange={handleChange} />
+                                        </div>
+                                        <div className='address-row-container'>
+                                            <span style={customerEmail}>{input.address}</span>
+                                            <input required style={inputEmail} placeholder='address' name="address" value={input.address} onChange={handleChange} />
+                                        </div>
+                                        <div className='address-row-container'>
+                                            <span style={customerEmail}>{input.apt}</span>
+                                            <input style={inputEmail} placeholder='apt, unit, etc. (optional)' name="apt" value={input.apt} onChange={handleChange} />
+                                        </div>
+                                        <div className='address-row-container'>
+                                            <span style={customerName}>{input.city}</span>
+                                            <span style={customerName}>{input.zip}</span>
+                                            <input required style={inputName} placeholder='city' name="city" value={input.city} onChange={handleChange} />
+                                            <input required style={inputName} placeholder='zip code' name="zip" value={input.zip} onChange={handleChange} />
+                                        </div>
+                                        <div className='address-row-container'>
+                                            <span style={customerEmail}>{input.state}</span>
+                                            <input required style={inputEmail} placeholder='state' name="state" value={input.state} onChange={handleChange} />
+                                        </div>
+                                        <div className='address-row-container'>
+                                            <span style={customerAreaCode}>{input.areaCode}</span>
+                                            <span style={customerPhone}>{input.phoneNumber}</span>
+                                            <input required style={inputAreaCode} placeholder='area' name="areaCode" value={input.areaCode} onChange={handleChange}/>
+                                            <input required style={inputPhone} placeholder='phone' name="phoneNumber" value={input.phoneNumber} onChange={handleChange}/>
+                                        </div>
+                                        <div className='address-row-container'>
+                                            <span style={updatePrompt}> SAVE or CANCEL before proceeding</span>
+                                        </div>
+                                        <input type="submit" value="save updates" style={updateShippingButton} />
+                                        </>
+                                        :
+                                        <>
+                                        <div className='address-row-container'>
+                                            <input required style={inputName} name="firstName" placeholder='first name'  onChange={handleChange}/>
+                                            <input required style={inputName} name="lastName" placeholder='last name' onChange={handleChange}/>
+                                        </div>
+                                        <div className='address-row-container'>
+                                            <input required style={inputEmail} placeholder='email' name="emailAddress" onChange={handleChange} />
+                                        </div>
+                                        <div className='address-row-container'>
+                                            <input required style={inputEmail} placeholder='address' name="address" onChange={handleChange} />
+                                        </div>
+                                        <div className='address-row-container'>
+                                            <input style={inputEmail} placeholder='apt, unit, etc. (optional)' name="apt" onChange={handleChange} />
+                                        </div>
+                                        <div className='address-row-container'>
+                                            <input required style={inputName} placeholder='city' name="city"  onChange={handleChange} />
+                                            <input required style={inputName} placeholder='zip code' name="zip" onChange={handleChange} />
+                                        </div>
+                                        <div className='address-row-container'>
+                                            <input required style={inputEmail} placeholder='state' name="state" onChange={handleChange} />
+                                        </div>
+                                        <div className='address-row-container'>
+                                            <input required style={inputAreaCode} placeholder='area code' name="areaCode" onChange={handleChange}/>
+                                            <input required style={inputPhone} placeholder='phone' name="phoneNumber" onChange={handleChange}/>
+                                        </div>
+                                        <input type="submit" value="save shipping address" style={updateShippingWhileLoggedOutButton} />
+                                        </>
+                                    }
+                                </div>
                             </div>
-                            <div className='address-row-container'>
-                                <span style={customerEmail}>{input.emailAddress}</span>
-                                <input style={inputEmail} placeholder='email' name="emailAddress" value={input.emailAddress} onChange={handleChange} />
+
+
+                            {/* BUTTON MAIN CONTAINER */}
+                            <div className='main-checkout-button-container'>
+
+                                {/* BUTTONS ON SHIPPING ADDRESS SIDE */}
+                                <div className='checkout-button-container'>
+                                    {
+                                        reduxCustomer.isLoggedIn ?
+                                        <>
+                                        <button style={editShippingButton} onClick={editShippingDetails}>edit shipping</button>
+                                        {/* <input type="submit" value="save updates" style={updateShippingButton} /> */}
+                                        {/* <button style={updateShippingButton} onClick={saveUpdatedShippingDetails}>save updates</button> */}
+                                        </>
+                                        :
+                                        <>
+                                        {/* <button onClick={saveUpdatedShippingDetails}>save shipping info</button> */}
+                                        </>
+                                    }
+
+                                </div>
+                                {/* END BUTTONS ON SHIPPING ADDRESS SIDE */}
+
                             </div>
-                            <div className='address-row-container'>
-                                <span style={customerEmail}>{input.address}</span>
-                                <input style={inputEmail} placeholder='address' name="address" value={input.address} onChange={handleChange} />
-                            </div>
-                            <div className='address-row-container'>
-                                <span style={customerEmail}>{input.apt}</span>
-                                <input style={inputEmail} placeholder='apt, unit, etc. (optional)' name="apt" value={input.apt} onChange={handleChange} />
-                            </div>
-                            <div className='address-row-container'>
-                                <span style={customerName}>{input.city}</span>
-                                <span style={customerName}>{input.zip}</span>
-                                <input style={inputName} placeholder='city' name="city" value={input.city} onChange={handleChange} />
-                                <input style={inputName} placeholder='zip code' name="zip" value={input.zip} onChange={handleChange} />
-                            </div>
-                            <div className='address-row-container'>
-                                <span style={customerEmail}>{input.state}</span>
-                                <input style={inputEmail} placeholder='state' name="state" value={input.state} onChange={handleChange} />
-                            </div>
-                            <div className='address-row-container'>
-                                <span style={customerAreaCode}>{input.areaCode}</span>
-                                <span style={customerPhone}>{input.phoneNumber}</span>
-                                <input style={inputAreaCode} placeholder='phone' name="areaCode" value={input.areaCode} onChange={handleChange}/>
-                                <input style={inputPhone} placeholder='phone' name="phone" value={input.phoneNumber} onChange={handleChange}/>
-                            </div>
-                            <div className='address-row-container'>
-                                <span style={updatePrompt}> SAVE or CANCEL before proceeding</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className='paymentInfoContainer'>
-                    {/* <div style={opacityLayer}></div> */}
-                    <div className='paymentInfoInnerContainer'>
+                            {/* END BUTTON MAIN CONTAINER */}
+
+                        </form>
+                    {/* </div> */}
+                    {/* END BILLING ADDRESS CONTAINER */}
                     
-                    <div className='payment-info-header'>credit card information</div>
-                    <div className='credit-card-container'>
-                        <div className='inner-credit-card-container'>
-                            <div style={creditCardRadioContainer}>
-                                <div style={{display:'flex',alignItems:'center'}}>
-                                <input style={{height:'100%', padding:'0px'}} ref={creditCardInput}  name="paymentType" type='radio' value="creditCard" onClick={choosePayment}/>
-                                <label htmlFor="credit card">credit card</label>
+
+
+
+                    {/* PAYMENT INFO CONTAINER */}
+                    <div className='paymentInfoContainer'>
+                        {/* <div style={opacityLayer}></div> */}
+                        <div className='paymentInfoInnerContainer'>
+                        
+                            <div className='payment-info-header'>credit card information</div>
+                            <div className='credit-card-container'>
+                                <div className='inner-credit-card-container'>
+                                    <div style={creditCardRadioContainer}>
+                                        <div style={{display:'flex',alignItems:'center'}}>
+                                        <input style={{height:'100%', padding:'0px'}}  name="paymentType" type='radio' value="creditCard" onClick={choosePayment}/>
+                                        <label htmlFor="credit card">credit card</label>
+                                        </div>
+                                        <div style={{marginRight:'5px'}}>
+                                            <img src={visaCard}/>
+                                            <img src={amexCard}/>
+                                            <img src={discoverCard}/>
+                                            <img src={masterCard}/>
+                                        </div>
+                                    </div>
+                                    <div className='credit-card-row' style={creditCardRowContainer}>
+                                        <input className='email-input' placeholder='card number' />
+                                    </div>
+                                    <div className='credit-card-row' style={creditCardRowContainer}>
+                                        <input className='email-input' placeholder='name on card' />
+                                    </div>
+                                    <div className='credit-card-row' style={creditCardRowContainer}>
+                                        <input className='name-input' placeholder='expiration date'/>
+                                        <input className='name-input' placeholder='security code'/>
+                                    </div>
                                 </div>
-                                <div style={{marginRight:'5px'}}>
-                                    <img src={visaCard}/>
-                                    <img src={amexCard}/>
-                                    <img src={discoverCard}/>
-                                    <img src={masterCard}/>
+                                <div className='inner-paypal-container'>
+                                    <div style={paypalRadioContainer}>
+                                        <div style={{display:'flex',alignItems:'center'}}>
+                                            <input style={{height:'100%', padding:'0px'}} name='paymentType' type='radio' value="paypal" onClick={choosePayment} />
+                                            <label htmlFor="paypal">paypal</label>
+                                        </div>
+                                        <div style={{marginRight:'5px',alignItems:'center',justifyContent:'center'}}>
+                                            {/* <img src={paypalP} height="38px"/> */}
+                                            <img src={paypalWord} height="52px"/>
+                                        </div>
+                                    </div>
+                                    <div style={paypalRowContainer}>
+                                        <input className='email-input' placeholder='cart total     $99.97'/>
+                                    </div>
+                                    <div style={paypalRowContainer}>
+                                        <input className='email-input' placeholder='shipping     -' />
+                                    </div>
+                                    <div style={paypalRowContainer}>
+                                        <input className='email-input' placeholder='order total     $99.97' />
+                                    </div>
+                                    <div style={paypalRowAgreementContainer}>
+                                        <div style={paypalAreementCheckbox}>
+                                            <input className='email-input' type='checkbox' />
+                                        </div>
+                                        <div style={paypalAreement}>
+                                            <span>I have read and agree to the terms & conditions and accept the return policy</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div className='credit-card-row' style={creditCardRowContainer}>
-                                <input className='email-input' placeholder='card number' />
-                            </div>
-                            <div className='credit-card-row' style={creditCardRowContainer}>
-                                <input className='email-input' placeholder='name on card' />
-                            </div>
-                            <div className='credit-card-row' style={creditCardRowContainer}>
-                                <input className='name-input' placeholder='expiration date'/>
-                                <input className='name-input' placeholder='security code'/>
-                            </div>
+
                         </div>
-                        <div className='inner-paypal-container'>
-                            <div style={paypalRadioContainer}>
-                                <div style={{display:'flex',alignItems:'center'}}>
-                                    <input style={{height:'100%', padding:'0px'}} ref={paypalInput} name='paymentType' type='radio' value="paypal" onClick={choosePayment} />
-                                    <label htmlFor="paypal">paypal</label>
-                                </div>
-                                <div style={{marginRight:'5px'}}>
-                                    <img src={paypalP} height="38px"/>
-                                    <img src={paypalWord} height="38px"/>
-                                </div>
+
+
+                        {/* BUTTON MAIN CONTAINER */}
+                        <div className='main-checkout-button-container'>
+
+                            {/* BUTTONS ON PAYMENT SIDE */}
+                            <div className='checkout-button-container'>
+                                <button style={checkoutCancelButton}>cancel</button>
+                                {
+                                    opacityLayer.display === "none" ? 
+                                    <>
+                                    <button style={checkoutProcessCreditButton}>process payment</button>
+                                    <button style={checkoutProcessPaypalButton}>pay with PAYPAL</button>
+                                    </>
+                                    :
+                                    ""
+                                }
                             </div>
-                            <div style={paypalRowContainer}>
-                                <input className='email-input' placeholder='cart total     $99.97'/>
-                            </div>
-                            <div style={paypalRowContainer}>
-                                <input className='email-input' placeholder='shipping     -' />
-                            </div>
-                            <div style={paypalRowContainer}>
-                                <input className='email-input' placeholder='order total     $99.97' />
-                            </div>
-                            <div style={paypalRowAgreementContainer}>
-                                <div style={paypalAreementCheckbox}>
-                                    <input className='email-input' type='checkbox' />
-                                </div>
-                                <div style={paypalAreement}>
-                                    <span>I have read and agree to the terms & conditions and accept the return policy</span>
-                                </div>
-                            </div>
+                            {/* END BUTTON PAYMENT SIDE */}
+
                         </div>
-                    </div>
+                        {/* END BUTTON MAIN CONTAINER */}
 
                     </div>
+                    {/* END PAYMENT INFO CONTAINER */}
+
+
                 </div>
-                </div>
-                <div className='main-checkout-button-container'>
-                    <div className='checkout-button-container'>
-                        <button style={editShippingButton} onClick={editShippingDetails}>edit shipping</button>
-                        <button style={updateShippingButton} onClick={saveUpdatedShippingDetails}>save updates</button>
-                    </div>
-                    <div className='checkout-button-container'>
-                        <button style={checkoutCancelButton}>cancel</button>
-                        {
-                            opacityLayer.display === "none" ? 
-                            <>
-                            <button style={checkoutProcessCreditButton}>process payment</button>
-                            <button style={checkoutProcessPaypalButton}>pay with PAYPAL</button>
-                            </>
-                            :
-                            ""
-                        }
-                    </div>
-                </div>
+                {/* END INFO and PAYMENT CONTAINER */}
+
             </div>
         </div>
-        </div>
+        </>
     );
 }
 export default Checkout;

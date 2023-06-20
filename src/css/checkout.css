@@ -22,6 +22,7 @@
 .infoContainer{
     display:flex;
     flex-direction: column;
+    justify-content: space-between;
     border:1px solid black;
     width:50%;
 }
@@ -121,16 +122,17 @@
 .main-checkout-button-container{
     display:flex;
     align-items: center;
-    justify-content: end;
+    justify-content: center;
     background-color: white;
     width:100%;
     height:70px;
+    min-height: 70px;
 }
 .checkout-button-container{
     display:flex;
     align-items: center;
     justify-content: center;
-    width:50%;
+    width:80%;
     /* border:1px solid; */
 }
 .use-me-to-get-colors{

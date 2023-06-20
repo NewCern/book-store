@@ -264,7 +264,7 @@ function Register(props) {
                         </div>
                         <div style={addressContainer}>
                             <input required style={addressStyle} name='address' type='text' placeholder='address' value={input.address} onChange={handleChange}/>
-                            <input required style={aptStyle} name='apt' type='text' placeholder='apt' value={input.apt} onChange={handleChange}/>
+                            <input style={aptStyle} name='apt' type='text' placeholder='apt' value={input.apt} onChange={handleChange}/>
                         </div>
                         <div style={cityStateZipContainer}>
                                 <input required style={cityStyle} name='city' type='text' placeholder='city' value={input.city} onChange={handleChange}/>
