@@ -1,5 +1,5 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { persistReducer } from 'redux-persist';
+import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; 
 import loadingSlice from "./loadingSlice";
 import searchSlice from "./searchSlice";
@@ -27,6 +27,7 @@ const persistConfig = {
     reducer: persistedReducer,
   });
   
+  export const persistor = persistStore(store);
 
 // export const store = configureStore({
 //     reducer: {

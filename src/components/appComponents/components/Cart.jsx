@@ -5,7 +5,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeFromCart, updateQuantity, updateTotal } from '../../../store/cartSlice';
 import { persistReducer, persistStore } from 'redux-persist';
-import { store } from '../../../store/store';
+import { persistor, store } from '../../../store/store';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 const container = {
@@ -253,7 +253,7 @@ function Cart(props){
 
     const handleCheckout = () => {
         navigate('/checkout');
-        // persistor.purge();
+        persistor.purge();
     };
 
     React.useEffect(() => {

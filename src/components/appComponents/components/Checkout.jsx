@@ -15,17 +15,33 @@ import paypalP from '../../../image/paypalP.png';
 import axios from 'axios';
 import { setLoggedIn } from '../../../store/loginSlice';
 
-
 function Checkout(props){
     const UPDATE_CUSTOMER = process.env.REACT_APP_UPDATE_CUSTOMER;
-    let creditCardInput = React.useRef(null);
-    let paypalInput = React.useRef(null);
     const reduxCart = useSelector(state => state.cart);
     const reduxCustomer = useSelector(state => state.login);
     const dispatch = useDispatch();
     const [ input, setInput ] = React.useState({
         ...reduxCustomer,
     });
+    const [ creditCardInput, setCreditCardInput ] = React.useState({
+        cardNumber: "",
+        nameOnCard: "",
+        expirationDate: "",
+        securityCode: "",
+    });
+    const [ guestInput, setGuestInput ] = React.useState({ 
+        firstName:"",
+        lastName:"",
+        emailAddress:"",
+        address:"",
+        apt:"",
+        city:"",
+        state:"",
+        zip:"",
+        areaCode:"",
+        phoneNumber:"",
+    });
+    const [ shippingFormMissingInfo, setShippingFormMissingInfo ] = React.useState(false);
     const [ creditCardRowContainer, setcreditCardRowContainer ] = React.useState({
         display:"none",
         /* border:1px solid; */
@@ -102,12 +118,12 @@ function Checkout(props){
         // border:'1px solid',
     })
     const [ paypalRowContainer, setPaypalRowContainer ] = React.useState({
-        display:"none",
+        display:"flex",
         // border:"1px solid",
         width:"100%",
     })
     const [ paypalRowAgreementContainer, setPaypalRowAgreementContainer ] = React.useState({
-        display:"none",
+        display:"flex",
         // border:"1px solid",
         width:"100%",
         marginTop:'20px',
@@ -234,11 +250,20 @@ function Checkout(props){
     })
     const [ updatePrompt, setUpdatePrompt ] = React.useState({
         fontSize:"11px",
+        color:"blue",
+        marginBottom:'15px',
+        display:'none',
+        
+    })
+    const [ shippingValidationPrompt, setShippingValidationPrompt ] = React.useState({
+        fontSize:"11px",
+        fontWeight:"600",
         color:"red",
         marginBottom:'15px',
         display:'none',
         
     })
+    const [ shippingValidationMissingFieldPrompt, setShippingValidationMissingFieldPrompt ] = React.useState("");
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -248,19 +273,51 @@ function Checkout(props){
                 [name]: value,
             }
         });
-    }
+        setShippingValidationPrompt({
+            ...shippingValidationPrompt,
+            display:'none',
+        });;
+    };
+
+    const handleCreditCardChange = (event) => {
+        const { name, value } = event.target;
+        setCreditCardInput(prevState => {
+            return {
+                ...prevState,
+                [name]: value,
+            }
+        });
+        setShippingValidationPrompt({
+            ...shippingValidationPrompt,
+            display:'none',
+        });
+    };
+
+    const handleGuestChange = (event) => {
+        const { name, value } = event.target;
+        setGuestInput(prevState => {
+            return {
+                ...prevState,
+                [name]: value,
+            }
+        });
+        setShippingValidationPrompt({
+            ...shippingValidationPrompt,
+            display:'none',
+        });
+    };
 
     const choosePayment = (event) => {
         const current = event.target;
         if(current.value === "creditCard"){
-            setPaypalRowContainer({
-                ...creditCardRowContainer,
-                display: 'none',
-            });
-            setPaypalRowAgreementContainer({
-                ...paypalRowAgreementContainer,
-                display: 'none',
-            });
+            // setPaypalRowContainer({
+            //     ...creditCardRowContainer,
+            //     display: 'none',
+            // });
+            // setPaypalRowAgreementContainer({
+            //     ...paypalRowAgreementContainer,
+            //     display: 'none',
+            // });
             setcreditCardRowContainer({
                 ...creditCardRowContainer,
                 display: 'flex',
@@ -369,9 +426,38 @@ function Checkout(props){
         });
     };
 
-    const saveUpdatedShippingDetails = async (event) => { 
+    const processCreditCardPayment = () => {
+        for(let key in guestInput){
+            console.log("Can you see me: ", key)
+            if(key !== 'apt' && key !== 'aptUpperCase' && guestInput[key] === ""){
+                setShippingValidationMissingFieldPrompt(key);
+                return setShippingValidationPrompt({
+                    ...shippingValidationPrompt,
+                    display:'block',
+                });
+            }
+        }
+        for(let key in creditCardInput){
+            if( creditCardInput[key] === ""){
+                setShippingValidationMissingFieldPrompt(key);
+                return setShippingValidationPrompt({
+                    ...shippingValidationPrompt,
+                    display:'block',
+                });
+            }
+        }
+    };
 
-        event.preventDefault();
+    const saveUpdatedShippingDetails = async (event) => { 
+        for(let key in input){
+            if(key !== 'apt' && key !== 'aptUpperCase' && input[key] === ""){
+                setShippingValidationMissingFieldPrompt(key);
+                return setShippingValidationPrompt({
+                    ...shippingValidationPrompt,
+                    display:'block',
+                });
+            }
+        }
 
         try{
             const update = {
@@ -384,11 +470,13 @@ function Checkout(props){
                 cityUpperCase: input.city.toUpperCase(),
                 stateUpperCase: input.state.toUpperCase(),
             };
+
             await axios.post(UPDATE_CUSTOMER, update)
             .then(res => {
                 dispatch(setLoggedIn(input));
                 console.log("Response from checkout: ", res);
             });
+
             setUpdateShippingButton({
                 ...updateShippingButton,
                 display:"none",
@@ -445,9 +533,7 @@ function Checkout(props){
 
     React.useEffect(() => {
         // console.log("From use effect in Checkout component: ");
-        // console.log(reduxCustomer);
-        // console.log(input);
-    }, [input]);
+    }, [input, shippingFormMissingInfo]);
     
     return (
         <>
@@ -458,8 +544,7 @@ function Checkout(props){
                 <div className='customer-info-payment-container'>
 
                     {/* BILLING ADDRESS CONTAINER */}
-                    {/* <div> */}
-                        <form action="POST" onSubmit={(event)=>saveUpdatedShippingDetails(event)} className='infoContainer' >
+                    <div className='infoContainer' >
                             <div className='billing-shipping-info-header'>billing/shipping information</div>
                             <div className='customer-address-container'>
                                 <div className='inner-customer-address-container'>
@@ -467,77 +552,78 @@ function Checkout(props){
                                     {
                                         reduxCustomer.isLoggedIn ?
                                         <>
-                                        <div className='address-row-container'>
-                                            <span style={customerName}>{input.firstName}</span>
-                                            <span style={customerName}>{input.lastName}</span>
-                                            <input required style={inputName} name="firstName" placeholder='first name' value={input.firstName} onChange={handleChange}/>
-                                            <input required style={inputName} name="lastName" placeholder='last name' value={input.lastName} onChange={handleChange}/>
-                                        </div>
-                                        <div className='address-row-container'>
-                                            <span style={customerEmail}>{input.emailAddress}</span>
-                                            <input required style={inputEmail} placeholder='email' name="emailAddress" value={input.emailAddress} onChange={handleChange} />
-                                        </div>
-                                        <div className='address-row-container'>
-                                            <span style={customerEmail}>{input.address}</span>
-                                            <input required style={inputEmail} placeholder='address' name="address" value={input.address} onChange={handleChange} />
-                                        </div>
-                                        <div className='address-row-container'>
-                                            <span style={customerEmail}>{input.apt}</span>
-                                            <input style={inputEmail} placeholder='apt, unit, etc. (optional)' name="apt" value={input.apt} onChange={handleChange} />
-                                        </div>
-                                        <div className='address-row-container'>
-                                            <span style={customerName}>{input.city}</span>
-                                            <span style={customerName}>{input.zip}</span>
-                                            <input required style={inputName} placeholder='city' name="city" value={input.city} onChange={handleChange} />
-                                            <input required style={inputName} placeholder='zip code' name="zip" value={input.zip} onChange={handleChange} />
-                                        </div>
-                                        <div className='address-row-container'>
-                                            <span style={customerEmail}>{input.state}</span>
-                                            <input required style={inputEmail} placeholder='state' name="state" value={input.state} onChange={handleChange} />
-                                        </div>
-                                        <div className='address-row-container'>
-                                            <span style={customerAreaCode}>{input.areaCode}</span>
-                                            <span style={customerPhone}>{input.phoneNumber}</span>
-                                            <input required style={inputAreaCode} placeholder='area' name="areaCode" value={input.areaCode} onChange={handleChange}/>
-                                            <input required style={inputPhone} placeholder='phone' name="phoneNumber" value={input.phoneNumber} onChange={handleChange}/>
-                                        </div>
-                                        <div className='address-row-container'>
-                                            <span style={updatePrompt}> SAVE or CANCEL before proceeding</span>
-                                        </div>
-                                        <input type="submit" value="save updates" style={updateShippingButton} />
+                                            <div className='address-row-container'>
+                                                <span style={customerName}>{input.firstName}</span>
+                                                <span style={customerName}>{input.lastName}</span>
+                                                <input required style={inputName} name="firstName" placeholder='first name' value={input.firstName} onChange={handleChange}/>
+                                                <input required style={inputName} name="lastName" placeholder='last name' value={input.lastName} onChange={handleChange}/>
+                                            </div>
+                                            <div className='address-row-container'>
+                                                <span style={customerEmail}>{input.address}</span>
+                                                <input required style={inputEmail} placeholder='address' name="address" value={input.address} onChange={handleChange} />
+                                            </div>
+                                            <div className='address-row-container'>
+                                                <span style={customerEmail}>{input.apt}</span>
+                                                <input style={inputEmail} placeholder='apt, unit, etc. (optional)' name="apt" value={input.apt} onChange={handleChange} />
+                                            </div>
+                                            <div className='address-row-container'>
+                                                <span style={customerName}>{input.city}</span>
+                                                <span style={customerName}>{input.zip}</span>
+                                                <input required style={inputName} placeholder='city' name="city" value={input.city} onChange={handleChange} />
+                                                <input required style={inputName} placeholder='zip code' name="zip" value={input.zip} onChange={handleChange} />
+                                            </div>
+                                            <div className='address-row-container'>
+                                                <span style={customerEmail}>{input.state}</span>
+                                                <input required style={inputEmail} placeholder='state' name="state" value={input.state} onChange={handleChange} />
+                                            </div>
+                                            <div className='address-row-container'>
+                                                <span style={customerAreaCode}>{input.areaCode}</span>
+                                                <span style={customerPhone}>{input.phoneNumber}</span>
+                                                <input required style={inputAreaCode} placeholder='area' name="areaCode" value={input.areaCode} onChange={handleChange}/>
+                                                <input required style={inputPhone} placeholder='phone' name="phoneNumber" value={input.phoneNumber} onChange={handleChange}/>
+                                            </div>
+                                            <div className='address-row-container'>
+                                                <span style={updatePrompt}>click SAVE or CANCEL before proceeding</span>
+                                            </div>
+                                            <div className='address-row-container'>
+                                                <span style={shippingValidationPrompt}>* {shippingValidationMissingFieldPrompt} is required!</span>
+                                            </div>
+                                            <button type="submit" style={updateShippingButton} onClick={saveUpdatedShippingDetails}>save updates</button>
                                         </>
                                         :
                                         <>
-                                        <div className='address-row-container'>
-                                            <input required style={inputName} name="firstName" placeholder='first name'  onChange={handleChange}/>
-                                            <input required style={inputName} name="lastName" placeholder='last name' onChange={handleChange}/>
-                                        </div>
-                                        <div className='address-row-container'>
-                                            <input required style={inputEmail} placeholder='email' name="emailAddress" onChange={handleChange} />
-                                        </div>
-                                        <div className='address-row-container'>
-                                            <input required style={inputEmail} placeholder='address' name="address" onChange={handleChange} />
-                                        </div>
-                                        <div className='address-row-container'>
-                                            <input style={inputEmail} placeholder='apt, unit, etc. (optional)' name="apt" onChange={handleChange} />
-                                        </div>
-                                        <div className='address-row-container'>
-                                            <input required style={inputName} placeholder='city' name="city"  onChange={handleChange} />
-                                            <input required style={inputName} placeholder='zip code' name="zip" onChange={handleChange} />
-                                        </div>
-                                        <div className='address-row-container'>
-                                            <input required style={inputEmail} placeholder='state' name="state" onChange={handleChange} />
-                                        </div>
-                                        <div className='address-row-container'>
-                                            <input required style={inputAreaCode} placeholder='area code' name="areaCode" onChange={handleChange}/>
-                                            <input required style={inputPhone} placeholder='phone' name="phoneNumber" onChange={handleChange}/>
-                                        </div>
-                                        <input type="submit" value="save shipping address" style={updateShippingWhileLoggedOutButton} />
+                                            <div className='address-row-container'>
+                                                <input required style={inputName} name="firstName" placeholder='first name'  onChange={handleGuestChange}/>
+                                                <input required style={inputName} name="lastName" placeholder='last name' onChange={handleGuestChange}/>
+                                            </div>
+                                            <div className='address-row-container'>
+                                                <input required style={inputEmail} placeholder='email' name="emailAddress" onChange={handleGuestChange} />
+                                            </div>
+                                            <div className='address-row-container'>
+                                                <input required style={inputEmail} placeholder='address' name="address" onChange={handleGuestChange} />
+                                            </div>
+                                            <div className='address-row-container'>
+                                                <input style={inputEmail} placeholder='apt, unit, etc. (optional)' name="apt" onChange={handleGuestChange} />
+                                            </div>
+                                            <div className='address-row-container'>
+                                                <input required style={inputName} placeholder='city' name="city"  onChange={handleGuestChange} />
+                                                <input required style={inputName} placeholder='zip code' name="zip" onChange={handleGuestChange} />
+                                            </div>
+                                            <div className='address-row-container'>
+                                                <input required style={inputEmail} placeholder='state' name="state" onChange={handleGuestChange} />
+                                            </div>
+                                            <div className='address-row-container'>
+                                                <input required style={inputAreaCode} placeholder='area code' name="areaCode" onChange={handleGuestChange}/>
+                                                <input required style={inputPhone} placeholder='phone' name="phoneNumber" onChange={handleGuestChange}/>
+                                            </div>
+                                            <div className='address-row-container' style={{flexDirection:'column'}}>
+                                                <span style={shippingValidationPrompt}>- One or more fields are missing!</span>
+                                                <span style={shippingValidationPrompt}>* {shippingValidationMissingFieldPrompt} is required!</span>
+                                            </div>
                                         </>
                                     }
                                 </div>
                             </div>
-
 
                             {/* BUTTON MAIN CONTAINER */}
                             <div className='main-checkout-button-container'>
@@ -547,13 +633,10 @@ function Checkout(props){
                                     {
                                         reduxCustomer.isLoggedIn ?
                                         <>
-                                        <button style={editShippingButton} onClick={editShippingDetails}>edit shipping</button>
-                                        {/* <input type="submit" value="save updates" style={updateShippingButton} /> */}
-                                        {/* <button style={updateShippingButton} onClick={saveUpdatedShippingDetails}>save updates</button> */}
+                                            <button style={editShippingButton} onClick={editShippingDetails}>edit shipping</button>
                                         </>
                                         :
                                         <>
-                                        {/* <button onClick={saveUpdatedShippingDetails}>save shipping info</button> */}
                                         </>
                                     }
 
@@ -563,13 +646,10 @@ function Checkout(props){
                             </div>
                             {/* END BUTTON MAIN CONTAINER */}
 
-                        </form>
-                    {/* </div> */}
+                        {/* </form> */}
+                    </div>
                     {/* END BILLING ADDRESS CONTAINER */}
                     
-
-
-
                     {/* PAYMENT INFO CONTAINER */}
                     <div className='paymentInfoContainer'>
                         {/* <div style={opacityLayer}></div> */}
@@ -591,14 +671,14 @@ function Checkout(props){
                                         </div>
                                     </div>
                                     <div className='credit-card-row' style={creditCardRowContainer}>
-                                        <input className='email-input' placeholder='card number' />
+                                        <input className='email-input' placeholder='card number' name="cardNumber" value={creditCardInput.cardNumber} onChange={handleCreditCardChange}/>
                                     </div>
                                     <div className='credit-card-row' style={creditCardRowContainer}>
-                                        <input className='email-input' placeholder='name on card' />
+                                        <input className='email-input' placeholder='name on card' name="nameOnCard" value={creditCardInput.nameOnCard} onChange={handleCreditCardChange} />
                                     </div>
                                     <div className='credit-card-row' style={creditCardRowContainer}>
-                                        <input className='name-input' placeholder='expiration date'/>
-                                        <input className='name-input' placeholder='security code'/>
+                                        <input className='name-input' placeholder='expiration date' name="expirationDate" value={creditCardInput.expirationDate} onChange={handleCreditCardChange}/>
+                                        <input className='name-input' placeholder='security code' name="securityCode" value={creditCardInput.securityCode} onChange={handleCreditCardChange}/>
                                     </div>
                                 </div>
                                 <div className='inner-paypal-container'>
@@ -613,7 +693,7 @@ function Checkout(props){
                                         </div>
                                     </div>
                                     <div style={paypalRowContainer}>
-                                        <input className='email-input' placeholder='cart total     $99.97'/>
+                                        <input className='email-input' placeholder='cart total     $99.97' value={`cart total:    ${reduxCart.total}`}/>
                                     </div>
                                     <div style={paypalRowContainer}>
                                         <input className='email-input' placeholder='shipping     -' />
@@ -644,7 +724,7 @@ function Checkout(props){
                                 {
                                     opacityLayer.display === "none" ? 
                                     <>
-                                    <button style={checkoutProcessCreditButton}>process payment</button>
+                                    <button style={checkoutProcessCreditButton} onClick={processCreditCardPayment}>process payment</button>
                                     <button style={checkoutProcessPaypalButton}>pay with PAYPAL</button>
                                     </>
                                     :
