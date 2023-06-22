@@ -6,6 +6,8 @@ import axios from 'axios';
 import { setKeyword, setResults } from '../../../store/searchSlice';
 import { setLoggout } from '../../../store/loginSlice';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { persistor } from '../../../store/store';
+import { removeCustomerId } from '../../../store/cartSlice';
 
 const container = {
     display:'flex',
@@ -173,7 +175,13 @@ function Navbar(props){
     const logOut = () => {
         navigate('/login');
         dispatch(setLoggout());
+        dispatch(removeCustomerId());
         console.log(reduxLogin);
+    };
+
+    // TEMP USE ONLY TO PURGE STATE
+    const purgeState = () => {
+        persistor.purge();
     };
 
     React.useEffect(() => {
@@ -182,7 +190,7 @@ function Navbar(props){
     
     return (
         <div style={container}>
-            <div style={logoContainer} onClick={navigations.toHome}>Lonas</div>
+            <div style={logoContainer} onClick={navigations.toHome}>Lonas<button onClick={purgeState}>purge</button></div>
             <div style={searchContainer}>
                 <input name='search' value={input.search} onChange={handleChange} style={searchInputStyle} type="text"/>
                 <button onClick={handleSearch} style={searchButtonStyle}>Search</button>

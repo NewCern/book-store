@@ -117,6 +117,14 @@ function Checkout(props){
         // backgroundColor:'white',
         // border:'1px solid',
     })
+    const [ cartTotalAtCheckout, setCartTotalAtCheckout ] = React.useState({
+        width:"100%",
+        fontSize:"11px",
+        padding:'9px',
+        marginTop:"5px",
+        backgroundColor:'white',
+        border:'1px solid',
+    })
     const [ paypalRowContainer, setPaypalRowContainer ] = React.useState({
         display:"flex",
         // border:"1px solid",
@@ -310,14 +318,6 @@ function Checkout(props){
     const choosePayment = (event) => {
         const current = event.target;
         if(current.value === "creditCard"){
-            // setPaypalRowContainer({
-            //     ...creditCardRowContainer,
-            //     display: 'none',
-            // });
-            // setPaypalRowAgreementContainer({
-            //     ...paypalRowAgreementContainer,
-            //     display: 'none',
-            // });
             setcreditCardRowContainer({
                 ...creditCardRowContainer,
                 display: 'flex',
@@ -693,13 +693,13 @@ function Checkout(props){
                                         </div>
                                     </div>
                                     <div style={paypalRowContainer}>
-                                        <input className='email-input' placeholder='cart total     $99.97' value={`cart total:    ${reduxCart.total}`}/>
+                                        <span style={cartTotalAtCheckout}>cart total:    ${reduxCart.total}</span>
                                     </div>
                                     <div style={paypalRowContainer}>
-                                        <input className='email-input' placeholder='shipping     -' />
+                                        <span style={cartTotalAtCheckout}>shipping:    -</span>
                                     </div>
                                     <div style={paypalRowContainer}>
-                                        <input className='email-input' placeholder='order total     $99.97' />
+                                        <span style={cartTotalAtCheckout}>total:    ${reduxCart.total}</span>
                                     </div>
                                     <div style={paypalRowAgreementContainer}>
                                         <div style={paypalAreementCheckbox}>

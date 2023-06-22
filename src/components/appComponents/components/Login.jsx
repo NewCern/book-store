@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FileUploadOutlined } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { setLoggedIn } from '../../../store/loginSlice';
+import { addCustomerId } from '../../../store/cartSlice';
 
 const Container = {
     display:'flex',
@@ -105,6 +106,7 @@ function Login(props) {
                 const body = JSON.parse(res.data.body);
                 if(body.statusCode === 200){
                     dispatch(setLoggedIn(body.user));
+                    dispatch(addCustomerId(body.user.customerId));
                     return navigate('/');
                 }
                 setemailORpasswordValidation({

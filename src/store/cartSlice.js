@@ -1,8 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { v4 as uuid } from "uuid";
 
 const initialState = {
+    orderId: "",
+    customerId: "",
+    isLoggedIn: false,
+    emailAddress: "",
+    shippingDetails: {},
     items: [],
     total: 0,
+    openCart: true,
+    fullfilled: false,
+    paymentProcessed: false,
 }
 
 // this is a combination of actions and reducers
@@ -10,6 +19,20 @@ export const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
+        addCustomerId: (state, customerId) => {
+            return {
+                ...state,
+                customerId: customerId.payload,
+                isLoggedIn: true,
+            }
+        },
+        removeCustomerId: (state) => {
+            return {
+                ...state,
+                customerId: "",
+                isLoggedIn: false,
+            }
+        },
         addToCart: (state, item) => {
             const cartTotal = state.items.reduce((acc, cartItem) => {
                 const price = parseFloat(cartItem.price);
@@ -17,6 +40,7 @@ export const cartSlice = createSlice({
                 return total;
             }, 0);
             return {
+                ...state,
                 total: (cartTotal + parseFloat(item.payload.price)).toFixed(2),
                 items: [
                     ...state.items,
@@ -35,6 +59,7 @@ export const cartSlice = createSlice({
             }, 0);
             return {
                 ...state,
+                orderId: newList.length === 0 ? "" : state.orderId,
                 items: newList.sort((a, b) => a.title.localeCompare(b.title)),
                 total: newTotal.toFixed(2),
             }
@@ -60,5 +85,12 @@ export const cartSlice = createSlice({
     },
 })
 
-export const { addToCart, removeFromCart, updateTotal, updateQuantity } = cartSlice.actions;
+export const { 
+    addToCart, 
+    removeFromCart, 
+    updateTotal, 
+    updateQuantity, 
+    addCustomerId,
+    removeCustomerId, 
+} = cartSlice.actions;
 export default cartSlice.reducer;

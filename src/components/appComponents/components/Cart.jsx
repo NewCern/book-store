@@ -253,7 +253,7 @@ function Cart(props){
 
     const handleCheckout = () => {
         navigate('/checkout');
-        persistor.purge();
+        // persistor.purge();
     };
 
     React.useEffect(() => {
