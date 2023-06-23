@@ -1,12 +1,10 @@
 import * as React from 'react';
 import SideBarCategories from './SideBarCategories';
-// import { authors } from '../../../database/books';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeFromCart, updateQuantity, updateTotal } from '../../../store/cartSlice';
-import { persistReducer, persistStore } from 'redux-persist';
-import { persistor, store } from '../../../store/store';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const container = {
     display:'flex',
@@ -194,7 +192,7 @@ const individualItemQuantity = {
 const proceedToCheckoutContainer = {
     display:'flex',
     justifyContent:'start',
-    width:'50%',
+    width:'70%',
     // border:'1px solid',
     textAlign:'center',
     marginRight:'10px',
@@ -206,13 +204,40 @@ const checkoutButton = {
     backgroundColor:'#f4d608',
     borderRadius:'10px',
     fontWeight:'600',
+    marginRight:'10px',
 };
+// const saveCartButton = {
+//     padding:'5px 50px 5px 50px',
+//     border:'1px solid',
+//     borderColor:'#a18f14',
+//     backgroundColor:'orange',
+//     // borderRadius:'10px',
+//     fontWeight:'600',
+// };
 
 function Cart(props){
-    // const persistor = persistStore(store);
+    const INSERT_ORDER = process.env.REACT_APP_UPDATE_ORDER;
     const navigate = useNavigate();
     const reduxCart = useSelector(state => state.cart);
+    const reduxLogin = useSelector(state => state.login);
     const dispatch = useDispatch();
+    const [ saveCartButton, setSaveCartButton ] = React.useState({
+        padding:'5px 50px 5px 50px',
+        border:'1px solid',
+        borderColor:'#a18f14',
+        backgroundColor:'orange',
+        // borderRadius:'10px',
+        fontWeight:'600',
+    })
+    const [ savedCartButton, setSavedCartButton ] = React.useState({
+        padding:'5px 50px 5px 50px',
+        border:'1px solid',
+        borderColor:'#a18f14',
+        backgroundColor:'silver',
+        // borderRadius:'10px',
+        fontWeight:'600',
+        display:'none',
+    })
     const [individualItemQuantity, setindividualItemQuantity] = React.useState({});
     const handleRemoveFromCart = (event, item) => {
         dispatch(removeFromCart(item));
@@ -236,7 +261,15 @@ function Cart(props){
                 ...book,
                 quantity: individualItemQuantity[bookId],
             }))
-            console.log(typeof book.price, typeof book.quantity);
+            setSavedCartButton({
+                ...savedCartButton,
+                display: 'none',
+            });
+            setSaveCartButton({
+                ...saveCartButton,
+                display: 'block',
+            });
+            // console.log(typeof book.price, typeof book.quantity);
         }
     };
 
@@ -251,9 +284,35 @@ function Cart(props){
         return totalForEachProduct;
     };
 
-    const handleCheckout = () => {
-        navigate('/checkout');
-        // persistor.purge();
+    const handleCheckout = async () => {
+        try {
+            // if(reduxLogin.isLoggedIn){
+                await axios.post(INSERT_ORDER, reduxCart);
+            // }
+            navigate('/checkout');
+        } 
+        catch (error){
+            console.log(error)
+        }
+    };
+
+    const saveCart = async () => {
+        try {
+            // if(reduxLogin.isLoggedIn){
+                await axios.post(INSERT_ORDER, reduxCart);
+                setSavedCartButton({
+                    ...savedCartButton,
+                    display: 'block',
+                });
+                setSaveCartButton({
+                    ...saveCartButton,
+                    display: 'none',
+                });
+            // }
+        } 
+        catch (error){
+
+        }
     };
 
     React.useEffect(() => {
@@ -328,6 +387,8 @@ function Cart(props){
                     <div style={cartTotalContainer}>
                         <div style={proceedToCheckoutContainer}>
                             <button style={checkoutButton} onClick={handleCheckout}>Proceed to checkout</button>
+                            <button style={saveCartButton} onClick={saveCart}>Save cart</button>
+                            <button style={savedCartButton}>Cart saved</button>
                         </div>
                         <div style={totalText}>Total: &nbsp; <b>${reduxCart.total}</b></div>
                         <div style={totalPrice}></div>

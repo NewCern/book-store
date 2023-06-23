@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, removeFromCart } from '../../../store/cartSlice';
 import { useNavigate } from 'react-router-dom';
 import { setProduct } from '../../../store/productSlice';
+import axios from 'axios';
 
 const container = {
     display:'flex',
@@ -179,11 +180,16 @@ const checkoutButton = {
 
 
 function SearchResults(props){
+    // const INSERT_ORDER = process.env.REACT_APP_UPDATE_ORDER;
     const reduxSearch = useSelector(state => state.search);
     const reduxProduct = useSelector(state => state.product);
     const reduxCart = useSelector(state => state.cart);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    // const insertOrder = async (reduxCart) => {
+    //     await axios.post(INSERT_ORDER, reduxCart);
+    // };
 
     const handleCart = (event, item, index) => {
         const deleteIcon = document.getElementById(`result-remove-cart-${index}`);
@@ -236,8 +242,9 @@ function SearchResults(props){
     
     React.useEffect(() => {
         retainCartStatusInSearch();
-        console.log("From search component: Items in Cart ---> ", reduxCart.items)
-        console.log("From search component: Items in Search Results ---> ", reduxSearch.results)
+        // console.log("From search component: Items in Cart ---> ", reduxCart.items)
+        console.log("From search component: redux cart object ---> ", reduxCart)
+        // console.log("From search component: Items in Search Results ---> ", reduxSearch.results)
     }, [reduxCart.items, reduxSearch.results]);
     
     return (

@@ -190,7 +190,8 @@ function Navbar(props){
     
     return (
         <div style={container}>
-            <div style={logoContainer} onClick={navigations.toHome}>Lonas<button onClick={purgeState}>purge</button></div>
+            {/* <div style={logoContainer} onClick={navigations.toHome}>Lonas<button onClick={purgeState}>purge</button></div> */}
+            <div style={logoContainer} onClick={navigations.toHome}>Lonas</div>
             <div style={searchContainer}>
                 <input name='search' value={input.search} onChange={handleChange} style={searchInputStyle} type="text"/>
                 <button onClick={handleSearch} style={searchButtonStyle}>Search</button>

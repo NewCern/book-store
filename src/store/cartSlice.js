@@ -6,7 +6,15 @@ const initialState = {
     customerId: "",
     isLoggedIn: false,
     emailAddress: "",
-    shippingDetails: {},
+    shippingDetails: {
+        address: "",
+        apt: "",
+        city: "",
+        state: "",
+        zip: "",
+        areaCode: "",
+        phoneNumber: "",
+    },
     items: [],
     total: 0,
     openCart: true,
@@ -34,6 +42,7 @@ export const cartSlice = createSlice({
             }
         },
         addToCart: (state, item) => {
+            const id = state.orderId === "" ? uuid() : state.orderId;
             const cartTotal = state.items.reduce((acc, cartItem) => {
                 const price = parseFloat(cartItem.price);
                 const total = (acc + price);
@@ -41,6 +50,7 @@ export const cartSlice = createSlice({
             }, 0);
             return {
                 ...state,
+                orderId: id,
                 total: (cartTotal + parseFloat(item.payload.price)).toFixed(2),
                 items: [
                     ...state.items,
