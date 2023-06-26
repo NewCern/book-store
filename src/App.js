@@ -10,6 +10,8 @@ import RegisterPage from './components/appComponents/RegisterPage';
 import Login from './components/appComponents/components/Login';
 import LoginPage from './components/appComponents/LoginPage';
 import CheckoutPage from './components/appComponents/checkoutPage';
+import OrdersPage from './components/appComponents/OrdersPage';
+
 
 
 const container = {
@@ -35,6 +37,7 @@ function App() {
         <Route path='/product' element={<ProductPage/>}/>
         <Route path='/admin/upload' element={<AdminPage/>}/>
         <Route path='/checkout' element={<CheckoutPage/>}/>
+        <Route path='/orders' element={<OrdersPage/>}/>
       </Routes>
     </div>
     </BrowserRouter>

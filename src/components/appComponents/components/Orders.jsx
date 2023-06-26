@@ -8,10 +8,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, removeFromCart } from '../../../store/cartSlice';
 import { useNavigate } from 'react-router-dom';
 import { setProduct } from '../../../store/productSlice';
-import  book1  from '../../../image/book1.png';
-import { Link } from 'react-router-dom';
-
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+import book1 from '../../../image/book1.png';
+
 
 const container = {
     display:'flex',
@@ -181,18 +181,35 @@ const checkoutButton = {
     fontWeight:'600',
 };
 
-
-function SearchResults(props){
-    // const INSERT_ORDER = process.env.REACT_APP_UPDATE_ORDER;
+function Orders(props){
+    const GET_ORDERS = process.env.REACT_APP_GET_ORDERS;
     const reduxSearch = useSelector(state => state.search);
     const reduxProduct = useSelector(state => state.product);
+    const reduxCustomer = useSelector(state => state.login);
     const reduxCart = useSelector(state => state.cart);
+    const  [orders, setOrders ] = React.useState([]);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    // const insertOrder = async (reduxCart) => {
-    //     await axios.post(INSERT_ORDER, reduxCart);
-    // };
+    const fetchOrders = async (reduxCustomer) => {
+        try{
+            await axios.post(GET_ORDERS, reduxCustomer)
+            .then(res => {
+                const body = JSON.parse(res.data.body);
+                if(body.statusCode === 200){
+                    setOrders(body.closedCart)
+                    // console.log("This is the Orders page: ", body.closedCart);
+                } else {
+                    setOrders([]);
+                }
+            })
+            .catch(error => {
+                console.log(`There was an error: ${error}`)
+            })
+        } catch (error) {
+            console.log(`There was an error: ${error}`);
+        }
+    };
 
     const handleCart = (event, item, index) => {
         const deleteIcon = document.getElementById(`result-remove-cart-${index}`);
@@ -244,11 +261,8 @@ function SearchResults(props){
     };
     
     React.useEffect(() => {
-        retainCartStatusInSearch();
-        // console.log("From search component: Items in Cart ---> ", reduxCart.items)
-        console.log("From search component: redux cart object ---> ", reduxCart)
-        // console.log("From search component: Items in Search Results ---> ", reduxSearch.results)
-    }, [reduxCart.items, reduxSearch.results]);
+        fetchOrders(reduxCustomer);
+    }, []);
     
     return (
         <div>
@@ -257,57 +271,54 @@ function SearchResults(props){
             <div style={innerContainer}>
                 <SideBarCategories/>
                 <div style={productContainer}>
-                    <div style={cartTitle}>{reduxSearch.results.length} products: {reduxSearch.keyword}</div>
+                    <div style={cartTitle}>Orders</div>
 
                     {/* INDIVIDUAL PRODUCT START*/}
-                    {reduxSearch.results.map((book, index) => (
-                    <div key={index} style={productInfoContainer}>
-                        <div style={imageContainer}>
-                            <div style={imageWrapper} onClick={(event) => navigateToProduct(event, book)}>
-                                {/* <div>IMAGE</div> */}
-                                <img src={book1} width="150px" style={{marginTop:'15px'}}/>
-                            </div>
-                        </div>
-                        <div style={descriptionContainer}>
-                            <div style={productTitle}>{book.title.toUpperCase()}</div>
-                            <div style={publicationContainer}>
-                                <div style={keyValuePairContainer}>
-                                    <div style={key}>By: </div>
-                                    <div style={value}>  {book.by.toUpperCase()}</div>
-                                </div>
-                                <div style={keyValuePairContainer}>
-                                    <div style={key}>Publication Date: </div>
-                                    <div style={value}>{book.publicationDate}</div>
-                                </div>
-                                <div style={keyValuePairContainer}>
-                                    <div style={key}>Format: </div>
-                                    <div style={value}>{book.format}</div>
-                                </div>
-                                <div style={keyValuePairContainer}>
-                                    <div style={key}>Category: </div>
-                                    <div style={value}>{book.category}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div style={priceContainer}>
-                            <div style={price}>${book.price}</div>
-                            <div style={addToCartContainer}>
-                                <Link onClick={(event) => handleCart(event, book, index)}>
-                                    <div style={cartWrapper} >
-                                        <AddShoppingCartIcon id={`result-add-cart-${index}`} sx={{ fontSize:35, color:'#718966' }} />
+                    {orders.map((order, index) => (
+                    <div key={index} style={{display:'flex',flexDirection:'column'}}>
+                        <div style={{marginTop:'15px'}}><b>Order Date: {order.timestamp}</b></div>
+                        {
+                            order.items.map((book, bookIndex) => (
+                                <div key={bookIndex}>
+                                    <div key={index} style={productInfoContainer}>
+                                        <div style={imageContainer}>
+                                            <div style={imageWrapper} onClick={(event) => navigateToProduct(event, book)}>
+                                                {/* <div>IMAGE</div> */}
+                                                <img src={book1} width="150px" style={{marginTop:'15px'}}/>
+                                            </div>
+                                        </div>
+                                        <div style={descriptionContainer}>
+                                            <div style={productTitle}>{book.title.toUpperCase()}</div>
+                                            <div style={publicationContainer}>
+                                                <div style={keyValuePairContainer}>
+                                                    <div style={key}>By: </div>
+                                                    <div style={value}>  {book.by.toUpperCase()}</div>
+                                                </div>
+                                                <div style={keyValuePairContainer}>
+                                                    <div style={key}>Publication Date: </div>
+                                                    <div style={value}>{book.publicationDate}</div>
+                                                </div>
+                                                <div style={keyValuePairContainer}>
+                                                    <div style={key}>Format: </div>
+                                                    <div style={value}>{book.format}</div>
+                                                </div>
+                                                <div style={keyValuePairContainer}>
+                                                    <div style={key}>Category: </div>
+                                                    <div style={value}>{book.category}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style={priceContainer}>
+                                            <div style={price}>${book.price}</div>
+                                            <div style={goToCartContainer}>
+                                                <button id={`to-cart-button-${index}`} onClick={navigateToCart} style={toCartButton}>IN CART</button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </Link>
-                                <Link onClick={(event) => handleCart(event, book, index)}>
-                                    <div style={cartWrapper}>
-                                        <RemoveShoppingCartIcon id={`result-remove-cart-${index}`}  sx={{ fontSize:35, color:'#e63b3b', display:'none' }} />
-                                    </div>
-                                </Link>
-                                {/* <DeleteIcon sx={{ fontSize:30, color:'#e63b3b' }} /> */}
-                            </div>
-                            <div style={goToCartContainer}>
-                                <button id={`to-cart-button-${index}`} onClick={navigateToCart} style={toCartButton}>IN CART</button>
-                            </div>
-                        </div>
+                                </div>
+                            ) )
+                        }
+                        <div style={{display:'flex',justifyContent:'center',margin:'5px 0px 25px 0px',fontSize:'18px'}}>total: &nbsp;&nbsp;<b>${order.total}</b></div>
                     </div>
                     ))}
                     {/* INDIVIDUAL PRODUCT END */}
@@ -318,4 +329,4 @@ function SearchResults(props){
         </div>
     );
 }
-export default SearchResults;
+export default Orders;

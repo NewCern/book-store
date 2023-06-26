@@ -27,10 +27,11 @@ export const cartSlice = createSlice({
     name: 'cart',
     initialState,
     reducers: {
-        addCustomerId: (state, customerId) => {
+        addCustomerId: (state, customer) => {
             return {
                 ...state,
-                customerId: customerId.payload,
+                customerId: customer.payload.customerId,
+                emailAddress: customer.payload.emailAddress,
                 isLoggedIn: true,
             }
         },
@@ -74,6 +75,32 @@ export const cartSlice = createSlice({
                 total: newTotal.toFixed(2),
             }
         },
+        setCart: (state, cart) => {
+            return {
+                ...cart.payload,
+            }
+        },
+        resetCart: (state) => {
+            return {
+                ...state,
+                orderId: "",
+                emailAddress: "",
+                shippingDetails: {
+                    address: "",
+                    apt: "",
+                    city: "",
+                    state: "",
+                    zip: "",
+                    areaCode: "",
+                    phoneNumber: "",
+                },
+                items: [],
+                total: 0,
+                openCart: true,
+                fullfilled: false,
+                paymentProcessed: false,
+            }
+        },
         updateTotal: (state, updatedCarttotal) => {
             return {
                 ...state,
@@ -102,5 +129,7 @@ export const {
     updateQuantity, 
     addCustomerId,
     removeCustomerId, 
+    resetCart,
+    setCart,
 } = cartSlice.actions;
 export default cartSlice.reducer;

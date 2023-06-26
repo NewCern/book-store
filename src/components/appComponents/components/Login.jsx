@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FileUploadOutlined } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { setLoggedIn } from '../../../store/loginSlice';
-import { addCustomerId } from '../../../store/cartSlice';
+import { addCustomerId, setCart } from '../../../store/cartSlice';
 
 const Container = {
     display:'flex',
@@ -71,6 +71,7 @@ const submitStyle = {
 
 function Login(props) {
     const USER_LOGIN = process.env.REACT_APP_LOGIN;
+    const GET_CART = process.env.REACT_APP_GET_CART;
 
     const navigate = useNavigate();
     const reduxLogin = useSelector(state => state.login);
@@ -102,11 +103,43 @@ function Login(props) {
         event.preventDefault();
         try{
             await axios.post(USER_LOGIN, input)
-            .then((res) => {
+            .then( async (res) => {
                 const body = JSON.parse(res.data.body);
                 if(body.statusCode === 200){
                     dispatch(setLoggedIn(body.user));
-                    dispatch(addCustomerId(body.user.customerId));
+                    dispatch(addCustomerId(body.user));
+                    await axios.post(GET_CART, body.user)
+                    .then(res => {
+                        const cart = JSON.parse(res.data.body);
+                        if(cart.statusCode === 200){
+                            dispatch(setCart({ 
+                                ...cart.openCart,
+                                emailAddress: body.user.emailAddress,
+                             }));
+                        } else {
+                            dispatch(setCart({
+                                orderId: "",
+                                customerId: body.user.customerId,
+                                isLoggedIn: true,
+                                emailAddress: body.user.emailAddress,
+                                shippingDetails: {
+                                    address: "",
+                                    apt: "",
+                                    city: "",
+                                    state: "",
+                                    zip: "",
+                                    areaCode: "",
+                                    phoneNumber: "",
+                                },
+                                items: [],
+                                total: 0,
+                                openCart: true,
+                                fullfilled: false,
+                                paymentProcessed: false,
+                            }));
+                        }
+                        // console.log("Cart populated on login: ", cart)
+                    });
                     return navigate('/');
                 }
                 setemailORpasswordValidation({

@@ -7,7 +7,7 @@ import { setKeyword, setResults } from '../../../store/searchSlice';
 import { setLoggout } from '../../../store/loginSlice';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { persistor } from '../../../store/store';
-import { removeCustomerId } from '../../../store/cartSlice';
+import { removeCustomerId, resetCart } from '../../../store/cartSlice';
 
 const container = {
     display:'flex',
@@ -50,7 +50,7 @@ const homeContainer = {
     display:'flex',
     justifyContent:'center',
     alignItems:'center',
-    width:'10%',
+    width:'7%',
     color:'#2c844f',
     fontWeight:'600',
     // border:'1px solid',
@@ -61,7 +61,7 @@ const loginContainer = {
     display:'flex',
     justifyContent:'center',
     alignItems:'center',
-    width:'10%',
+    width:'7%',
     color:'#2c844f',
     fontWeight:'600',
     // border:'1px solid'
@@ -71,7 +71,7 @@ const accountIconContainer = {
     display:'flex',
     justifyContent:'center',
     alignItems:'center',
-    width:'10%',
+    width:'7%',
     color:'#2c844f',
     fontWeight:'600',
     // border:'1px solid'
@@ -81,7 +81,7 @@ const registerContainer = {
     display:'flex',
     justifyContent:'center',
     alignItems:'center',
-    width:'10%',
+    width:'7%',
     color:'#2c844f',
     fontWeight:'600',
     // border:'1px solid'
@@ -91,7 +91,7 @@ const adminContainer = {
     display:'flex',
     justifyContent:'center',
     alignItems:'center',
-    width:'10%',
+    width:'7%',
     color:'#2c844f',
     fontWeight:'600',
     // border:'1px solid'
@@ -101,7 +101,7 @@ const cartContainer = {
     position:'relative',
     justifyContent:'center',
     alignItems:'center',
-    width:'10%',
+    width:'7%',
     color:'#2c844f',
     fontWeight:'600',
     // border:'1px solid'
@@ -147,6 +147,7 @@ function Navbar(props){
         toCart: () => navigate('/cart'),
         toRegister: () => navigate('/register'),
         toLogin: () => navigate('/login'),
+        toOrders: () => navigate('/orders'),
     };
 
     const handleSearch = async () => {
@@ -176,7 +177,7 @@ function Navbar(props){
         navigate('/login');
         dispatch(setLoggout());
         dispatch(removeCustomerId());
-        console.log(reduxLogin);
+        dispatch(resetCart());
     };
 
     // TEMP USE ONLY TO PURGE STATE
@@ -201,6 +202,7 @@ function Navbar(props){
                 reduxLogin.isLoggedIn ?
                 <>
                     <div style={loginContainer} onClick={logOut}>logout</div>
+                    <div style={loginContainer} onClick={navigations.toOrders}>orders</div>
                     <div style={accountIconContainer}>
                         <AccountCircleIcon sx={{ fontSize:25, color:'#2c844f' }} onClick={navigations.toCart}/>
                         <span>{reduxLogin.firstName[0]}{reduxLogin.lastName[0]}</span>

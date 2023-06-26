@@ -4,6 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeFromCart, updateQuantity, updateTotal } from '../../../store/cartSlice';
 import { useNavigate } from 'react-router-dom';
+import book1 from '../../../image/book1.png';
 import axios from 'axios';
 
 const container = {
@@ -269,7 +270,6 @@ function Cart(props){
                 ...saveCartButton,
                 display: 'block',
             });
-            // console.log(typeof book.price, typeof book.quantity);
         }
     };
 
@@ -286,9 +286,9 @@ function Cart(props){
 
     const handleCheckout = async () => {
         try {
-            // if(reduxLogin.isLoggedIn){
+            if(reduxLogin.isLoggedIn){
                 await axios.post(INSERT_ORDER, reduxCart);
-            // }
+            }
             navigate('/checkout');
         } 
         catch (error){
@@ -335,8 +335,8 @@ function Cart(props){
                         </div>
                         <div style={imageContainer}>
                             <div style={imageWrapper}>
-                                <div>IMAGE</div>
-                                <img src="" />
+                                {/* <div>IMAGE</div> */}
+                                <img src={book1} width="150px" style={{marginTop:'20px'}}/>
                             </div>
                         </div>
                         <div style={descriptionContainer}>
@@ -385,13 +385,30 @@ function Cart(props){
                     {/* INDIVIDUAL PRODUCT END */}
 
                     <div style={cartTotalContainer}>
-                        <div style={proceedToCheckoutContainer}>
-                            <button style={checkoutButton} onClick={handleCheckout}>Proceed to checkout</button>
-                            <button style={saveCartButton} onClick={saveCart}>Save cart</button>
-                            <button style={savedCartButton}>Cart saved</button>
-                        </div>
-                        <div style={totalText}>Total: &nbsp; <b>${reduxCart.total}</b></div>
-                        <div style={totalPrice}></div>
+                        {
+                            reduxCart.items.length !== 0 ?
+                            <>
+                            <div style={proceedToCheckoutContainer}>
+                                <button style={checkoutButton} onClick={handleCheckout}>Proceed to checkout</button>
+                                {
+                                    reduxLogin.isLoggedIn? 
+                                    <>
+                                    <button style={saveCartButton} onClick={saveCart}>Save cart</button>
+                                    <button style={savedCartButton}>Cart saved</button>
+                                    </>
+                                    :
+                                    <>
+                                    </>
+                                }
+                            </div>
+                            <div style={totalText}>Total: &nbsp; <b>${reduxCart.total}</b></div>
+                            <div style={totalPrice}></div>
+                            </>
+                            :
+                            <div style={{display:'flex',justifyContent:'center',width:'100%'}}>
+                            <h1>Shopping cart is empty</h1>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
