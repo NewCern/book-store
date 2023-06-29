@@ -310,9 +310,6 @@ function Orders(props){
                                         </div>
                                         <div style={priceContainer}>
                                             <div style={price}>${book.price}</div>
-                                            <div style={goToCartContainer}>
-                                                <button id={`to-cart-button-${index}`} onClick={navigateToCart} style={toCartButton}>IN CART</button>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
